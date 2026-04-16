@@ -1,14 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import htlHeroImage from "@/images/htl-panorama-16-4.jpg";
+import alexandreDebieveImage from "@/images/alexandre-debieve-fo7jilwjotu-unsplash.webp";
+import arduinoImage from "@/images/arduino-4916880_960_720.jpg";
+import boardImage from "@/images/board-4855963_960_720.jpg";
+import sourceImage from "@/images/source-4280758_960_720.jpg";
+import technicalDrawingImage from "@/images/technical-drawing-3324368_960_720.jpg";
+import workshopImage from "@/images/workshop-3758513_960_720.jpg";
 
 const gridImages = [
-  { id: "hof", alt: "HTL Steyr panorama, school courtyard", objectPosition: "center 22%", label: "Da Hof" },
-  { id: "einfahrt", alt: "HTL Steyr panorama, building front", objectPosition: "center 35%", label: "D'Einfahrt" },
-  { id: "dach", alt: "HTL Steyr panorama, roofline detail", objectPosition: "center 45%", label: "S'Dachl" },
-  { id: "wiese", alt: "HTL Steyr panorama, grassy campus edge", objectPosition: "center 58%", label: "Da Wiesnrand" },
-  { id: "fenster", alt: "HTL Steyr panorama, window section", objectPosition: "center 68%", label: "De Fensterreiha" },
-  { id: "himmel", alt: "HTL Steyr panorama, skyline above campus", objectPosition: "center 80%", label: "Da Himmel drüber" },
+  { id: "alexandre-debieve", src: alexandreDebieveImage, alt: "Person programming on a laptop in a dark workspace" },
+  { id: "arduino", src: arduinoImage, alt: "Close-up of an Arduino board with colorful connected wires" },
+  { id: "board", src: boardImage, alt: "Circuit board and electronics components on a workbench" },
+  { id: "source", src: sourceImage, alt: "Source code shown on a monitor with a blue-toned interface" },
+  { id: "technical-drawing", src: technicalDrawingImage, alt: "Technical drawing tools laid out on blueprint paper" },
+  { id: "workshop", src: workshopImage, alt: "Engineering workshop with machines and industrial equipment" },
 ];
 
 export default function Home() {
@@ -68,24 +74,18 @@ export default function Home() {
 
       {/* Image grid */}
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-2 bg-white px-4 sm:grid-cols-3 sm:px-8 lg:grid-cols-3 lg:px-12">
-        {gridImages.map((img, index) => (
+        {gridImages.map((img) => (
           <div
             key={img.id}
-            className={`relative aspect-[4/3] overflow-hidden rounded-sm bg-white ${index > 3 ? "hidden sm:block" : ""}`}
+            className="relative aspect-[4/3] overflow-hidden rounded-sm bg-white"
           >
-            <div
-              role="img"
-              aria-label={img.alt}
-              className="absolute inset-0 transition-transform duration-300 hover:scale-105"
-              style={{
-                backgroundImage: `url(${htlHeroImage.src})`,
-                backgroundSize: "cover",
-                backgroundPosition: img.objectPosition,
-              }}
+            <Image
+              src={img.src}
+              alt={img.alt}
+              fill
+              sizes="(min-width: 640px) 33vw, 100vw"
+              className="object-cover transition-transform duration-300 hover:scale-105"
             />
-            <span className="absolute bottom-2 left-2 rounded bg-black/60 px-2 py-1 text-xs text-white">
-              {img.label}
-            </span>
           </div>
         ))}
       </div>

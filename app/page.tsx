@@ -29,7 +29,7 @@ export default function Home() {
       </div>
 
       {/* Full-width hero image */}
-      <div className="relative mt-2 h-52 w-full overflow-hidden sm:h-72 md:h-96">
+      <div className="relative mt-2 h-56 w-full overflow-hidden sm:h-72 md:h-96">
         <Image
           src={heroImageSrc}
           alt="HTL Steyr"

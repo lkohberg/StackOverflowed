@@ -10,7 +10,7 @@ export type Game = {
 
 export class DuplicateGameError extends Error {
   constructor() {
-    super("A game with this URL already exists.");
+    super("Ein Spiel mit dieser URL existiert bereits.");
   }
 }
 

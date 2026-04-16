@@ -90,6 +90,12 @@ export default function Home() {
         ))}
       </div>
 
+      <div className="w-full px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
+        <p className="text-base italic leading-relaxed text-slate-600 sm:text-lg">
+          geh ned in de htl - alle die schon dort sind
+        </p>
+      </div>
+
       <footer className="mt-10 w-full bg-black px-4 py-10 text-zinc-100 sm:px-8 sm:py-12 lg:px-12">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
           <div>

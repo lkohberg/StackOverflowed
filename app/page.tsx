@@ -88,10 +88,10 @@ export default function Home() {
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-zinc-400">Zum Schluss no a Schmäh</p>
             <ul className="mt-4 space-y-2 text-sm leading-relaxed text-zinc-200 sm:text-base">
-              <li>• "Heit lern i fix früh ... oba erst nachm Leberkassemmerl."</li>
-              <li>• "Da Code laft nur am Freitag, weil unter da Wochn is er im Krankenstand."</li>
-              <li>• "Wenn&apos;s in da Werkstatt raucht, is ned immer da Lötkolben schuld."</li>
-              <li>• "I hob ka Bug baut — des is a österreichische Spezialfunktion."</li>
+              <li>• &quot;Heit lern i fix früh ... oba erst nachm Leberkassemmerl.&quot;</li>
+              <li>• &quot;Da Code laft nur am Freitag, weil unter da Wochn is er im Krankenstand.&quot;</li>
+              <li>• &quot;Wenn&apos;s in da Werkstatt raucht, is ned immer da Lötkolben schuld.&quot;</li>
+              <li>• &quot;I hob ka Bug baut — des is a österreichische Spezialfunktion.&quot;</li>
             </ul>
           </div>
 
@@ -104,7 +104,7 @@ export default function Home() {
             <hr className="hidden flex-1 border-zinc-700 sm:block" />
           </div>
 
-          <p className="text-xs text-zinc-500">StackOverflowed · "Passt scho" is ka QA-Prozess.</p>
+          <p className="text-xs text-zinc-500">StackOverflowed · &quot;Passt scho&quot; is ka QA-Prozess.</p>
         </div>
       </footer>
     </div>

@@ -3,12 +3,12 @@ import Link from "next/link";
 import htlHeroImage from "@/images/htl-panorama-16-4.jpg";
 
 const gridImages = [
-  { id: "hof", src: htlHeroImage, alt: "HTL Steyr panorama, school courtyard", objectPosition: "object-[center_22%]" },
-  { id: "einfahrt", src: htlHeroImage, alt: "HTL Steyr panorama, building front", objectPosition: "object-[center_35%]" },
-  { id: "dach", src: htlHeroImage, alt: "HTL Steyr panorama, roofline detail", objectPosition: "object-[center_45%]" },
-  { id: "wiese", src: htlHeroImage, alt: "HTL Steyr panorama, grassy campus edge", objectPosition: "object-[center_58%]" },
-  { id: "fenster", src: htlHeroImage, alt: "HTL Steyr panorama, window section", objectPosition: "object-[center_68%]" },
-  { id: "himmel", src: htlHeroImage, alt: "HTL Steyr panorama, skyline above campus", objectPosition: "object-[center_80%]" },
+  { id: "hof", alt: "HTL Steyr panorama, school courtyard", objectPosition: "center 22%", label: "Da Hof" },
+  { id: "einfahrt", alt: "HTL Steyr panorama, building front", objectPosition: "center 35%", label: "D'Einfahrt" },
+  { id: "dach", alt: "HTL Steyr panorama, roofline detail", objectPosition: "center 45%", label: "S'Dachl" },
+  { id: "wiese", alt: "HTL Steyr panorama, grassy campus edge", objectPosition: "center 58%", label: "Da Wiesnrand" },
+  { id: "fenster", alt: "HTL Steyr panorama, window section", objectPosition: "center 68%", label: "De Fensterreiha" },
+  { id: "himmel", alt: "HTL Steyr panorama, skyline above campus", objectPosition: "center 80%", label: "Da Himmel drüber" },
 ];
 
 export default function Home() {
@@ -73,12 +73,19 @@ export default function Home() {
             key={img.id}
             className={`relative aspect-[4/3] overflow-hidden rounded-sm bg-white ${index > 3 ? "hidden sm:block" : ""}`}
           >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              fill
-              className={`${img.objectPosition} object-cover transition-transform duration-300 hover:scale-105`}
+            <div
+              role="img"
+              aria-label={img.alt}
+              className="absolute inset-0 transition-transform duration-300 hover:scale-105"
+              style={{
+                backgroundImage: `url(${htlHeroImage.src})`,
+                backgroundSize: "cover",
+                backgroundPosition: img.objectPosition,
+              }}
             />
+            <span className="absolute bottom-2 left-2 rounded bg-black/60 px-2 py-1 text-xs text-white">
+              {img.label}
+            </span>
           </div>
         ))}
       </div>
@@ -87,11 +94,11 @@ export default function Home() {
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-zinc-400">Zum Schluss no a Schmäh</p>
-            <ul className="mt-4 space-y-2 text-sm leading-relaxed text-zinc-200 sm:text-base">
-              <li>• &quot;Heit lern i fix früh ... oba erst nachm Leberkassemmerl.&quot;</li>
-              <li>• &quot;Da Code laft nur am Freitag, weil unter da Wochn is er im Krankenstand.&quot;</li>
-              <li>• &quot;Wenn&apos;s in da Werkstatt raucht, is ned immer da Lötkolben schuld.&quot;</li>
-              <li>• &quot;I hob ka Bug baut — des is a österreichische Spezialfunktion.&quot;</li>
+            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-zinc-200 sm:text-base">
+              <li>{`"Heit lern i fix früh ... oba erst nachm Leberkassemmerl."`}</li>
+              <li>{`"Da Code laft nur am Freitag, weil unter da Wochn is er im Krankenstand."`}</li>
+              <li>{`"Wenn's in da Werkstatt raucht, is ned immer da Lötkolben schuld."`}</li>
+              <li>{`"I hob ka Bug baut — des is a österreichische Spezialfunktion."`}</li>
             </ul>
           </div>
 
@@ -104,7 +111,7 @@ export default function Home() {
             <hr className="hidden flex-1 border-zinc-700 sm:block" />
           </div>
 
-          <p className="text-xs text-zinc-500">StackOverflowed · &quot;Passt scho&quot; is ka QA-Prozess.</p>
+          <p className="text-xs text-zinc-500">{`StackOverflowed · "Passt scho" is ka QA-Prozess.`}</p>
         </div>
       </footer>
     </div>

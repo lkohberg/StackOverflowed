@@ -1,19 +1,20 @@
-import { Pool } from "pg";
-import type { QueryResultRow } from "pg";
+import { createPool } from "@vercel/postgres";
+import type { QueryResultRow } from "@vercel/postgres";
 
 declare global {
-  var __stackOverflowedPool: Pool | undefined;
+  var __stackOverflowedPool: ReturnType<typeof createPool> | undefined;
 }
 
 function getPool() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is not configured.");
+  const connectionString = process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
+
+  if (!connectionString) {
+    throw new Error("POSTGRES_URL (or DATABASE_URL) is not configured.");
   }
 
   if (!global.__stackOverflowedPool) {
-    global.__stackOverflowedPool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+    global.__stackOverflowedPool = createPool({
+      connectionString,
     });
   }
 

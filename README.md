@@ -2,9 +2,9 @@
 
 A modern student hub for IT students at HTL Steyr.
 
-## Why PostgreSQL (instead of Vercel KV)
+## Why Vercel DB (Postgres) (instead of Vercel KV)
 
-This project uses **PostgreSQL** because it is a strong fit for structured records (`id`, `title`, `url`, `description`, `created_at`), supports uniqueness constraints for duplicate URL prevention, and is production-ready on Vercel via managed Postgres providers.
+This project uses **Vercel DB (Postgres)** because it is a strong fit for structured records (`id`, `title`, `url`, `description`, `created_at`), supports uniqueness constraints for duplicate URL prevention, and is production-ready on Vercel.
 
 ## Project structure
 
@@ -20,7 +20,7 @@ StackOverflowed/
 ├── components/
 │   └── NavBar.tsx                  # Main navigation component
 ├── lib/
-│   ├── db.ts                       # PostgreSQL connection and schema setup
+│   ├── db.ts                       # Vercel DB (Postgres) connection and schema setup
 │   └── games.ts                    # Games data access functions
 ├── package.json
 └── README.md
@@ -54,7 +54,7 @@ CREATE TABLE games (
 2. Set environment variables in `.env.local`:
 
    ```bash
-   DATABASE_URL=postgres://USER:PASSWORD@HOST:PORT/DBNAME
+   POSTGRES_URL=postgres://USER:PASSWORD@HOST:PORT/DBNAME
    ```
 
 3. Start development server:
@@ -69,7 +69,7 @@ CREATE TABLE games (
 
 1. Push the repository to GitHub.
 2. Import the project in Vercel.
-3. Add `DATABASE_URL` in Vercel project environment variables.
+3. Add `POSTGRES_URL` in Vercel project environment variables.
 4. Deploy.
 
 The app creates the `games` table automatically on first API usage.

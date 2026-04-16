@@ -3,12 +3,12 @@ import Link from "next/link";
 import htlHeroImage from "@/images/htl-panorama-16-4.jpg";
 
 const gridImages = [
-  { src: "/technical/code-editor.svg", alt: "Code editor interface" },
-  { src: "/technical/terminal-code.svg", alt: "Terminal build output" },
-  { src: "/technical/circuit-board.svg", alt: "Circuit board paths and logic" },
-  { src: "/technical/code-review.svg", alt: "Code review diff and approvals" },
-  { src: "/technical/system-architecture.svg", alt: "Software architecture diagram" },
-  { src: "/technical/debugging.svg", alt: "Debugging dashboard" },
+  { id: "hof", src: htlHeroImage, alt: "HTL Steyr panorama, school courtyard", objectPosition: "object-[center_22%]" },
+  { id: "einfahrt", src: htlHeroImage, alt: "HTL Steyr panorama, building front", objectPosition: "object-[center_35%]" },
+  { id: "dach", src: htlHeroImage, alt: "HTL Steyr panorama, roofline detail", objectPosition: "object-[center_45%]" },
+  { id: "wiese", src: htlHeroImage, alt: "HTL Steyr panorama, grassy campus edge", objectPosition: "object-[center_58%]" },
+  { id: "fenster", src: htlHeroImage, alt: "HTL Steyr panorama, window section", objectPosition: "object-[center_68%]" },
+  { id: "himmel", src: htlHeroImage, alt: "HTL Steyr panorama, skyline above campus", objectPosition: "object-[center_80%]" },
 ];
 
 export default function Home() {
@@ -28,13 +28,13 @@ export default function Home() {
       </div>
 
       {/* Full-width hero image */}
-      <div className="relative mt-1 h-44 w-full sm:mt-2 sm:h-72 md:h-96">
+      <div className="relative h-48 w-full sm:h-72 md:h-[30rem]">
         <Image
           src={htlHeroImage}
           alt="HTL Steyr"
           fill
           sizes="100vw"
-          className="object-contain"
+          className="object-cover"
           priority
         />
       </div>
@@ -70,38 +70,43 @@ export default function Home() {
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-2 bg-white px-4 sm:grid-cols-3 sm:px-8 lg:grid-cols-3 lg:px-12">
         {gridImages.map((img, index) => (
           <div
-            key={img.src}
+            key={img.id}
             className={`relative aspect-[4/3] overflow-hidden rounded-sm bg-white ${index > 3 ? "hidden sm:block" : ""}`}
           >
             <Image
               src={img.src}
               alt={img.alt}
               fill
-              className="object-cover transition-transform duration-300 hover:scale-105"
+              className={`${img.objectPosition} object-cover transition-transform duration-300 hover:scale-105`}
             />
           </div>
         ))}
       </div>
 
-      {/* Bottom closing quote */}
-      <div className="w-full px-4 py-10 sm:px-8 sm:py-14 lg:px-12">
-        <p className="text-xl italic text-slate-400 sm:text-3xl">
-          Geh ned in de HTL.
-        </p>
-        <p className="mt-2 text-sm text-slate-300">— alle, die schon drin san</p>
-      </div>
-
-      {/* Quick links */}
-      <div className="w-full px-4 pb-10 sm:px-8 sm:pb-12 lg:px-12">
-        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
-          <hr className="hidden flex-1 border-slate-100 sm:block" />
-          <div className="flex gap-5">
-            <Link href="/browser-games" className="text-sm text-slate-400 transition-colors hover:text-slate-700">Browser Games</Link>
-            <Link href="/past-tests" className="text-sm text-slate-400 transition-colors hover:text-slate-700">Past Tests</Link>
+      <footer className="mt-10 w-full bg-black px-4 py-10 text-zinc-100 sm:px-8 sm:py-12 lg:px-12">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-zinc-400">Zum Schluss no a Schmäh</p>
+            <ul className="mt-4 space-y-2 text-sm leading-relaxed text-zinc-200 sm:text-base">
+              <li>• "Heit lern i fix früh ... oba erst nachm Leberkassemmerl."</li>
+              <li>• "Da Code laft nur am Freitag, weil unter da Wochn is er im Krankenstand."</li>
+              <li>• "Wenn&apos;s in da Werkstatt raucht, is ned immer da Lötkolben schuld."</li>
+              <li>• "I hob ka Bug baut — des is a österreichische Spezialfunktion."</li>
+            </ul>
           </div>
-          <hr className="hidden flex-1 border-slate-100 sm:block" />
+
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <hr className="hidden flex-1 border-zinc-700 sm:block" />
+            <div className="flex gap-5">
+              <Link href="/browser-games" className="text-sm text-zinc-300 transition-colors hover:text-white">Browser Games</Link>
+              <Link href="/past-tests" className="text-sm text-zinc-300 transition-colors hover:text-white">Past Tests</Link>
+            </div>
+            <hr className="hidden flex-1 border-zinc-700 sm:block" />
+          </div>
+
+          <p className="text-xs text-zinc-500">StackOverflowed · "Passt scho" is ka QA-Prozess.</p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

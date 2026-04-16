@@ -21,12 +21,12 @@ export default function BrowserGamesPage() {
       try {
         const response = await fetch("/api/games", { cache: "no-store" });
         if (!response.ok) {
-          throw new Error("Failed to load games.");
+          throw new Error("Spiele konnten nicht geladen werden.");
         }
         const data = (await response.json()) as { games: Game[] };
         setGames(data.games);
       } catch (loadError) {
-        setError(loadError instanceof Error ? loadError.message : "Failed to load games.");
+        setError(loadError instanceof Error ? loadError.message : "Spiele konnten nicht geladen werden.");
       } finally {
         setLoading(false);
       }
@@ -58,13 +58,13 @@ export default function BrowserGamesPage() {
       const data = (await response.json()) as { game?: Game; error?: string };
 
       if (!response.ok || !data.game) {
-        throw new Error(data.error ?? "Could not submit game.");
+        throw new Error(data.error ?? "Spiel konnte nicht eingereicht werden.");
       }
 
       setGames((current) => [data.game as Game, ...current]);
       event.currentTarget.reset();
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Could not submit game.");
+      setError(submitError instanceof Error ? submitError.message : "Spiel konnte nicht eingereicht werden.");
     } finally {
       setSubmitting(false);
     }
@@ -74,17 +74,17 @@ export default function BrowserGamesPage() {
     <div className="w-full px-6 py-8 sm:px-8 lg:px-12">
       <div className="space-y-8">
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Browser Games</h1>
-        <p className="mt-2 text-slate-600">Discover and share browser games that are fun between lessons.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Browser-Spiele</h1>
+        <p className="mt-2 text-slate-600">Entdecke und teile Browser-Spiele für die Zeit zwischen den Stunden.</p>
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <h2 className="text-xl font-semibold text-slate-900">Submit a game</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Spiel einreichen</h2>
         <form onSubmit={handleSubmit} className="mt-4 grid gap-4">
           <input
             name="title"
             type="text"
-            placeholder="Game title"
+            placeholder="Spieltitel"
             required
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-900"
           />
@@ -97,7 +97,7 @@ export default function BrowserGamesPage() {
           />
           <textarea
             name="description"
-            placeholder="Optional description"
+            placeholder="Optionale Beschreibung"
             rows={3}
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-900"
           />
@@ -106,18 +106,18 @@ export default function BrowserGamesPage() {
             disabled={submitting}
             className="w-fit rounded-md bg-slate-900 px-4 py-2 font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {submitting ? "Submitting..." : "Add game"}
+            {submitting ? "Wird eingereicht..." : "Spiel hinzufügen"}
           </button>
         </form>
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <h2 className="text-xl font-semibold text-slate-900">Game directory</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Spieleverzeichnis</h2>
 
-        {loading ? <p className="mt-4 text-slate-600">Loading games...</p> : null}
+        {loading ? <p className="mt-4 text-slate-600">Spiele werden geladen...</p> : null}
 
         {!loading && games.length === 0 ? (
-          <p className="mt-4 text-slate-600">No games submitted yet.</p>
+          <p className="mt-4 text-slate-600">Noch keine Spiele eingereicht.</p>
         ) : (
           <ul className="mt-4 grid gap-3">
             {games.map((game) => (

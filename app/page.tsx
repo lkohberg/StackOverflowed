@@ -9,12 +9,12 @@ import technicalDrawingImage from "@/images/technical-drawing-3324368_960_720.jp
 import workshopImage from "@/images/workshop-3758513_960_720.jpg";
 
 const gridImages = [
-  { id: "alexandre-debieve", src: alexandreDebieveImage, alt: "Person programming on a laptop in a dark workspace" },
-  { id: "arduino", src: arduinoImage, alt: "Close-up of an Arduino board with colorful connected wires" },
-  { id: "board", src: boardImage, alt: "Circuit board and electronics components on a workbench" },
-  { id: "source", src: sourceImage, alt: "Source code shown on a monitor with a blue-toned interface" },
-  { id: "technical-drawing", src: technicalDrawingImage, alt: "Technical drawing tools laid out on blueprint paper" },
-  { id: "workshop", src: workshopImage, alt: "Engineering workshop with machines and industrial equipment" },
+  { id: "alexandre-debieve", src: alexandreDebieveImage, alt: "Person programmiert auf einem Laptop in einem dunklen Arbeitsbereich" },
+  { id: "arduino", src: arduinoImage, alt: "Nahaufnahme eines Arduino-Boards mit farbigen Kabeln" },
+  { id: "board", src: boardImage, alt: "Leiterplatte und elektronische Bauteile auf einer Werkbank" },
+  { id: "source", src: sourceImage, alt: "Quellcode auf einem Monitor mit blauer Oberfläche" },
+  { id: "technical-drawing", src: technicalDrawingImage, alt: "Technische Zeichenwerkzeuge auf Blaupausenpapier" },
+  { id: "workshop", src: workshopImage, alt: "Technische Werkstatt mit Maschinen und Industrieausrüstung" },
 ];
 
 export default function Home() {
@@ -105,8 +105,9 @@ export default function Home() {
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
             <hr className="hidden flex-1 border-zinc-700 sm:block" />
             <div className="flex gap-5">
-              <Link href="/browser-games" className="text-sm text-zinc-300 transition-colors hover:text-white">Browser Games</Link>
-              <Link href="/past-tests" className="text-sm text-zinc-300 transition-colors hover:text-white">Past Tests</Link>
+              <Link href="/browser-games" className="text-sm text-zinc-300 transition-colors hover:text-white">Browser-Spiele</Link>
+              <Link href="/past-tests" className="text-sm text-zinc-300 transition-colors hover:text-white">Alte Schularbeiten</Link>
+              <Link href="/formulare" className="text-sm text-zinc-300 transition-colors hover:text-white">Formulare</Link>
             </div>
             <hr className="hidden flex-1 border-zinc-700 sm:block" />
           </div>

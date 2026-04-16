@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/browser-games", label: "Browser Games" },
-  { href: "/past-tests", label: "Past Tests" },
+  { href: "/", label: "Startseite" },
+  { href: "/browser-games", label: "Browser-Spiele" },
+  { href: "/past-tests", label: "Alte Schularbeiten" },
+  { href: "/formulare", label: "Formulare" },
 ];
 
 export function NavBar() {

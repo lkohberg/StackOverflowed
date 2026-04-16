@@ -26,7 +26,7 @@ export async function GET() {
     return NextResponse.json({ games });
   } catch (error) {
     console.error("GET /api/games failed", error);
-    return NextResponse.json({ error: "Failed to load games." }, { status: 500 });
+    return NextResponse.json({ error: "Spiele konnten nicht geladen werden." }, { status: 500 });
   }
 }
 
@@ -39,11 +39,11 @@ export async function POST(request: Request) {
     const description = normalizeText(body.description);
 
     if (!title || !url) {
-      return NextResponse.json({ error: "Title and URL are required." }, { status: 400 });
+      return NextResponse.json({ error: "Titel und URL sind erforderlich." }, { status: 400 });
     }
 
     if (!isValidHttpUrl(url)) {
-      return NextResponse.json({ error: "Please provide a valid URL." }, { status: 400 });
+      return NextResponse.json({ error: "Bitte gib eine gültige URL an." }, { status: 400 });
     }
 
     const game = await createGame({
@@ -59,6 +59,6 @@ export async function POST(request: Request) {
     }
 
     console.error("POST /api/games failed", error);
-    return NextResponse.json({ error: "Failed to save game." }, { status: 500 });
+    return NextResponse.json({ error: "Spiel konnte nicht gespeichert werden." }, { status: 500 });
   }
 }

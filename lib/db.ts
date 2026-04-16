@@ -1,22 +1,19 @@
-import { createPool } from "@vercel/postgres";
-import type { QueryResultRow } from "@vercel/postgres";
+import { Pool } from "@neondatabase/serverless";
 
 declare global {
-  var __stackOverflowedPool: ReturnType<typeof createPool> | undefined;
+  var __stackOverflowedPool: Pool | undefined;
 }
 
 function getPool() {
-  // Support DATABASE_URL for backward compatibility with older deployments/local setups.
-  const connectionString = process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
+  // Neon injects DATABASE_URL; POSTGRES_URL is kept for backward compatibility.
+  const connectionString = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
 
   if (!connectionString) {
-    throw new Error("POSTGRES_URL (or DATABASE_URL) is not configured.");
+    throw new Error("DATABASE_URL (or POSTGRES_URL) is not configured.");
   }
 
   if (!global.__stackOverflowedPool) {
-    global.__stackOverflowedPool = createPool({
-      connectionString,
-    });
+    global.__stackOverflowedPool = new Pool({ connectionString });
   }
 
   return global.__stackOverflowedPool;
@@ -44,7 +41,7 @@ export async function ensureGamesSchema() {
   schemaReady = true;
 }
 
-export async function query<T extends QueryResultRow>(text: string, values: unknown[] = []) {
+export async function query<T extends Record<string, unknown>>(text: string, values: unknown[] = []) {
   const pool = getPool();
   return pool.query<T>(text, values);
 }

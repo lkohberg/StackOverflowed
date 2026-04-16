@@ -3,12 +3,12 @@ import Link from "next/link";
 import htlHeroImage from "@/images/htl-panorama-16-4.jpg";
 
 const gridImages = [
-  { src: "https://picsum.photos/seed/embedded/600/600", alt: "Embedded systems" },
-  { src: "https://picsum.photos/seed/htlcode/600/600", alt: "Coding" },
-  { src: "https://picsum.photos/seed/machinery/600/600", alt: "Machinery" },
-  { src: "https://picsum.photos/seed/pcbboard/600/600", alt: "Circuit board" },
-  { src: "https://picsum.photos/seed/blueprint/600/600", alt: "Technical drawing" },
-  { src: "https://picsum.photos/seed/equations/600/600", alt: "Math" },
+  { src: "/technical/code-editor.svg", alt: "Code editor interface" },
+  { src: "/technical/terminal-code.svg", alt: "Terminal build output" },
+  { src: "/technical/circuit-board.svg", alt: "Circuit board paths and logic" },
+  { src: "/technical/code-review.svg", alt: "Code review diff and approvals" },
+  { src: "/technical/system-architecture.svg", alt: "Software architecture diagram" },
+  { src: "/technical/debugging.svg", alt: "Debugging dashboard" },
 ];
 
 export default function Home() {
@@ -67,7 +67,7 @@ export default function Home() {
       </div>
 
       {/* Image grid */}
-      <div className="grid grid-cols-1 gap-2 bg-white px-4 sm:grid-cols-3 sm:px-8 lg:grid-cols-4 lg:px-12">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-2 bg-white px-4 sm:grid-cols-3 sm:px-8 lg:grid-cols-3 lg:px-12">
         {gridImages.map((img, index) => (
           <div
             key={img.src}

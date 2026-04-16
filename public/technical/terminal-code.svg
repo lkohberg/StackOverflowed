@@ -1,0 +1,10 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#020617"/>
+  <rect x="140" y="150" width="920" height="600" rx="20" fill="#111827" stroke="#475569" stroke-width="4"/>
+  <text x="190" y="260" fill="#22D3EE" font-size="52" font-family="monospace">$ npm run build</text>
+  <text x="190" y="335" fill="#86EFAC" font-size="42" font-family="monospace">✓ Compiled successfully</text>
+  <text x="190" y="405" fill="#C4B5FD" font-size="38" font-family="monospace">Route (app)</text>
+  <text x="230" y="470" fill="#E2E8F0" font-size="34" font-family="monospace">┌ ○ /</text>
+  <text x="230" y="525" fill="#E2E8F0" font-size="34" font-family="monospace">├ ○ /browser-games</text>
+  <text x="230" y="580" fill="#E2E8F0" font-size="34" font-family="monospace">└ ○ /past-tests</text>
+</svg>

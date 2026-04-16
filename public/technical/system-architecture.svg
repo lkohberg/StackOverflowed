@@ -1,0 +1,20 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#111827"/>
+  <rect x="140" y="160" width="260" height="140" rx="16" fill="#1D4ED8"/>
+  <rect x="470" y="160" width="260" height="140" rx="16" fill="#2563EB"/>
+  <rect x="800" y="160" width="260" height="140" rx="16" fill="#3B82F6"/>
+  <rect x="305" y="450" width="260" height="140" rx="16" fill="#0EA5E9"/>
+  <rect x="635" y="450" width="260" height="140" rx="16" fill="#06B6D4"/>
+  <g stroke="#93C5FD" stroke-width="8">
+    <path d="M400 230H470"/>
+    <path d="M730 230H800"/>
+    <path d="M600 300V450"/>
+    <path d="M435 300V450"/>
+    <path d="M765 300V450"/>
+  </g>
+  <text x="190" y="245" fill="#DBEAFE" font-size="34" font-family="monospace">Frontend</text>
+  <text x="530" y="245" fill="#DBEAFE" font-size="34" font-family="monospace">API</text>
+  <text x="860" y="245" fill="#DBEAFE" font-size="34" font-family="monospace">DB</text>
+  <text x="355" y="535" fill="#CFFAFE" font-size="32" font-family="monospace">Auth</text>
+  <text x="700" y="535" fill="#CFFAFE" font-size="32" font-family="monospace">Cache</text>
+</svg>

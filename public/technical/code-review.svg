@@ -1,0 +1,13 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#0B1120"/>
+  <rect x="110" y="120" width="980" height="660" rx="22" fill="#111827"/>
+  <rect x="160" y="190" width="420" height="500" rx="16" fill="#1F2937"/>
+  <rect x="620" y="190" width="420" height="500" rx="16" fill="#1F2937"/>
+  <text x="190" y="270" fill="#93C5FD" font-size="36" font-family="monospace">- grid-cols-4</text>
+  <text x="190" y="340" fill="#FCA5A5" font-size="36" font-family="monospace">+ grid-cols-3</text>
+  <text x="190" y="410" fill="#C4B5FD" font-size="36" font-family="monospace">+ mx-auto</text>
+  <circle cx="680" cy="300" r="20" fill="#22C55E"/>
+  <text x="720" y="312" fill="#BBF7D0" font-size="34" font-family="monospace">Looks good</text>
+  <circle cx="680" cy="390" r="20" fill="#22C55E"/>
+  <text x="720" y="402" fill="#BBF7D0" font-size="34" font-family="monospace">Centered ✅</text>
+</svg>

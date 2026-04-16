@@ -6,6 +6,7 @@ declare global {
 }
 
 function getPool() {
+  // Support DATABASE_URL for backward compatibility with older deployments/local setups.
   const connectionString = process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
 
   if (!connectionString) {

@@ -27,7 +27,7 @@ export default function Home() {
             I Mog<br />Nimma.
           </h1>
           <p className="max-w-3xl text-sm leading-relaxed text-slate-500 sm:text-base lg:pt-2">
-            <em>„Wenn ma si auskennt, is ma scho z&apos;spät.&rdquo;</em><br />
+            <em>„Du kennst di aus? Na duast&apos;ned.&rdquo;</em><br />
             <span>—Confucius, wahrscheinlich</span>
           </p>
         </div>
@@ -95,10 +95,10 @@ export default function Home() {
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-zinc-400">Zum Schluss no a Schmäh</p>
             <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-zinc-200 sm:text-base">
-              <li>{`"Heit lern i fix früh ... oba erst nachm Leberkassemmerl."`}</li>
-              <li>{`"Da Code laft nur am Freitag, weil unter da Wochn is er im Krankenstand."`}</li>
+              <li>{`"Heit lern i fix ... oba erst nochm ersten Bier."`}</li>
+              <li>{`"Schwänzen? Bledsinn des is Zeitausgleich"`}</li>
               <li>{`"Wenn's in da Werkstatt raucht, is ned immer da Lötkolben schuld."`}</li>
-              <li>{`"I hob ka Bug baut — des is a österreichische Spezialfunktion."`}</li>
+              <li>{`"Des is ka bug, des is a feature."`}</li>
             </ul>
           </div>
 

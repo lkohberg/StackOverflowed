@@ -71,7 +71,8 @@ export default function BrowserGamesPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-5xl px-6 py-8">
+      <div className="space-y-8">
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Browser Games</h1>
         <p className="mt-2 text-slate-600">Discover and share browser games that are fun between lessons.</p>
@@ -132,6 +133,7 @@ export default function BrowserGamesPage() {
 
         {error ? <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p> : null}
       </section>
+    </div>
     </div>
   );
 }

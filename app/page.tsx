@@ -10,6 +10,8 @@ const gridImages = [
   { src: "https://picsum.photos/seed/equations/600/600", alt: "Math" },
 ];
 
+const heroImageSrc = "https://picsum.photos/seed/htl-steyr-hero/1800/900";
+
 export default function Home() {
   return (
     <div>
@@ -27,11 +29,12 @@ export default function Home() {
       </div>
 
       {/* Full-width hero image */}
-      <div className="relative mt-2 h-64 w-full overflow-hidden sm:h-80 md:h-96">
+      <div className="relative mt-2 h-52 w-full overflow-hidden sm:h-72 md:h-96">
         <Image
-          src="https://github.com/user-attachments/assets/0183febc-de51-4b74-9be4-55929f857536"
+          src={heroImageSrc}
           alt="HTL Steyr"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

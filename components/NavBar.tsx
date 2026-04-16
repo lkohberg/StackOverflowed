@@ -14,7 +14,7 @@ export function NavBar() {
 
   return (
     <header className="border-b border-slate-100 bg-white">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
+      <div className="flex w-full items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
         <Link href="/" className="text-sm font-semibold tracking-widest uppercase text-slate-800 transition-colors hover:text-slate-500">
           StackOverflowed
         </Link>

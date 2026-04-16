@@ -14,12 +14,12 @@ export default function Home() {
   return (
     <div>
       {/* Title + side quote */}
-      <div className="mx-auto max-w-5xl px-6 pb-4 pt-8">
-        <div className="flex items-start justify-between gap-8">
-          <h1 className="rainbow-text text-5xl font-light uppercase leading-tight tracking-[0.18em] sm:text-6xl">
+      <div className="w-full px-6 pb-6 pt-10 sm:px-8 lg:px-12">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <h1 className="rainbow-text text-4xl font-light uppercase leading-tight tracking-[0.14em] sm:text-5xl md:text-6xl">
             I Mog<br />Nimma.
           </h1>
-          <p className="mt-2 max-w-[220px] text-right text-sm leading-snug text-slate-400">
+          <p className="max-w-3xl text-base leading-relaxed text-slate-500 lg:pt-2">
             <em>„Wenn ma si auskennt, is ma scho z&apos;spät.&rdquo;</em><br />
             <span>—Confucius, wahrscheinlich</span>
           </p>
@@ -29,7 +29,7 @@ export default function Home() {
       {/* Full-width hero image */}
       <div className="relative mt-2 h-64 w-full overflow-hidden sm:h-80 md:h-96">
         <Image
-          src="https://picsum.photos/seed/htlsteyr/1920/600"
+          src="https://github.com/user-attachments/assets/0183febc-de51-4b74-9be4-55929f857536"
           alt="HTL Steyr"
           fill
           className="object-cover"
@@ -38,8 +38,8 @@ export default function Home() {
       </div>
 
       {/* Italic quote */}
-      <div className="mx-auto max-w-5xl px-6 py-10">
-        <p className="max-w-2xl text-2xl italic text-slate-500 sm:text-3xl">
+      <div className="w-full px-6 py-10 sm:px-8 lg:px-12">
+        <p className="text-xl italic leading-relaxed text-slate-600 sm:text-2xl md:text-3xl">
           Da Stack is übergonga.
         </p>
         <a
@@ -56,7 +56,7 @@ export default function Home() {
       </div>
 
       {/* Section divider */}
-      <div className="mx-auto max-w-5xl px-6 pb-4">
+      <div className="w-full px-6 pb-5 sm:px-8 lg:px-12">
         <div className="flex items-center gap-4">
           <hr className="flex-1 border-slate-200" />
           <span className="rainbow-text text-xs font-medium uppercase tracking-[0.3em]">Nur Stress</span>
@@ -65,9 +65,9 @@ export default function Home() {
       </div>
 
       {/* Image grid */}
-      <div className="grid grid-cols-3 gap-px bg-slate-100">
+      <div className="grid grid-cols-2 gap-2 bg-white px-6 sm:grid-cols-3 sm:px-8 lg:grid-cols-4 lg:px-12">
         {gridImages.map((img) => (
-          <div key={img.src} className="relative aspect-square overflow-hidden bg-white">
+          <div key={img.src} className="relative aspect-[4/3] overflow-hidden rounded-sm bg-white">
             <Image
               src={img.src}
               alt={img.alt}
@@ -79,7 +79,7 @@ export default function Home() {
       </div>
 
       {/* Bottom closing quote */}
-      <div className="mx-auto max-w-5xl px-6 py-14 text-center">
+      <div className="w-full px-6 py-14 sm:px-8 lg:px-12">
         <p className="text-2xl italic text-slate-400 sm:text-3xl">
           Geh ned in de HTL.
         </p>
@@ -87,7 +87,7 @@ export default function Home() {
       </div>
 
       {/* Quick links */}
-      <div className="mx-auto max-w-5xl px-6 pb-12">
+      <div className="w-full px-6 pb-12 sm:px-8 lg:px-12">
         <div className="flex items-center gap-4">
           <hr className="flex-1 border-slate-100" />
           <div className="flex gap-6">

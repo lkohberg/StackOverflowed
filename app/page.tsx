@@ -10,7 +10,7 @@ const gridImages = [
   { src: "https://picsum.photos/seed/equations/600/600", alt: "Math" },
 ];
 
-const heroImageSrc = "https://picsum.photos/seed/htl-steyr-hero/1800/900";
+const heroImageSrc = "/hero-htl.svg";
 
 export default function Home() {
   return (

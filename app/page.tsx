@@ -9,12 +9,12 @@ import technicalDrawingImage from "@/images/technical-drawing-3324368_960_720.jp
 import workshopImage from "@/images/workshop-3758513_960_720.jpg";
 
 const gridImages = [
-  { id: "alexandre-debieve", src: alexandreDebieveImage, alt: "Technical image 1" },
-  { id: "arduino", src: arduinoImage, alt: "Technical image 2" },
-  { id: "board", src: boardImage, alt: "Technical image 3" },
-  { id: "source", src: sourceImage, alt: "Technical image 4" },
-  { id: "technical-drawing", src: technicalDrawingImage, alt: "Technical image 5" },
-  { id: "workshop", src: workshopImage, alt: "Technical image 6" },
+  { id: "alexandre-debieve", src: alexandreDebieveImage, alt: "Person programming on a laptop in a dark workspace" },
+  { id: "arduino", src: arduinoImage, alt: "Close-up of an Arduino board with colorful connected wires" },
+  { id: "board", src: boardImage, alt: "Circuit board and electronics components on a workbench" },
+  { id: "source", src: sourceImage, alt: "Source code shown on a monitor with a blue-toned interface" },
+  { id: "technical-drawing", src: technicalDrawingImage, alt: "Technical drawing tools laid out on blueprint paper" },
+  { id: "workshop", src: workshopImage, alt: "Engineering workshop with machines and industrial equipment" },
 ];
 
 export default function Home() {

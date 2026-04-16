@@ -1,0 +1,17 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#052E2B"/>
+  <g stroke="#14B8A6" stroke-width="8">
+    <path d="M120 200H500V350H760V520H1080"/>
+    <path d="M120 700H420V560H680V380H1080"/>
+    <path d="M240 120V300H360V460H520V740"/>
+    <path d="M920 120V260H760V420H620V780"/>
+  </g>
+  <g fill="#99F6E4">
+    <circle cx="120" cy="200" r="18"/>
+    <circle cx="1080" cy="520" r="18"/>
+    <circle cx="120" cy="700" r="18"/>
+    <circle cx="1080" cy="380" r="18"/>
+    <rect x="500" y="320" width="180" height="120" rx="18"/>
+  </g>
+  <text x="420" y="820" fill="#CCFBF1" font-size="46" font-family="monospace">PCB • Firmware • Logic</text>
+</svg>

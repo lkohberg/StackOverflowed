@@ -28,13 +28,13 @@ export default function Home() {
       </div>
 
       {/* Full-width hero image */}
-      <div className="relative mt-1 h-44 w-full overflow-hidden sm:mt-2 sm:h-72 md:h-96">
+      <div className="relative mt-1 h-44 w-full sm:mt-2 sm:h-72 md:h-96">
         <Image
           src={htlHeroImage}
           alt="HTL Steyr"
           fill
           sizes="100vw"
-          className="object-cover"
+          className="object-contain"
           priority
         />
       </div>

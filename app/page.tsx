@@ -91,8 +91,8 @@ export default function Home() {
       </div>
 
       <div className="w-full px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
-        <p className="text-base italic leading-relaxed text-slate-600 sm:text-lg">
-          geh ned in de htl - alle die schon dort sind
+        <p className="text-3xl font-extrabold italic leading-tight text-slate-700 sm:text-5xl md:text-6xl">
+          Geh ned in die HTL – alle, die schon dort sind!
         </p>
       </div>
 

@@ -19,7 +19,7 @@ export default function Home() {
           <h1 className="rainbow-text text-4xl font-light uppercase leading-tight tracking-[0.14em] sm:text-5xl md:text-6xl">
             I Mog<br />Nimma.
           </h1>
-          <p className="max-w-md text-base leading-relaxed text-slate-500 lg:pt-2">
+          <p className="max-w-3xl text-base leading-relaxed text-slate-500 lg:pt-2">
             <em>„Wenn ma si auskennt, is ma scho z&apos;spät.&rdquo;</em><br />
             <span>—Confucius, wahrscheinlich</span>
           </p>
@@ -39,7 +39,7 @@ export default function Home() {
 
       {/* Italic quote */}
       <div className="w-full px-6 py-10 sm:px-8 lg:px-12">
-        <p className="max-w-3xl text-xl italic leading-relaxed text-slate-600 sm:text-2xl md:text-3xl">
+        <p className="text-xl italic leading-relaxed text-slate-600 sm:text-2xl md:text-3xl">
           Da Stack is übergonga.
         </p>
         <a

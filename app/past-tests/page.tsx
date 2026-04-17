@@ -352,7 +352,7 @@ export default function PastTestsPage() {
                     Absenderklasse: {test.class_name} · Upload-Jahr: {test.upload_year} · Datei: {test.file_name}
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
-                    Stoff: {test.topic_summary.trim() || "Keine Beschreibung"}
+                    Stoff: {test.topic_summary?.trim() || "Keine Beschreibung"}
                   </p>
                   <a
                     href={`/api/past-tests?downloadId=${test.id}`}

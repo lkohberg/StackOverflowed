@@ -60,7 +60,7 @@ export async function ensurePastTestsSchema() {
       teacher TEXT NOT NULL,
       test_number SMALLINT NOT NULL,
       upload_year INTEGER NOT NULL,
-      topic_summary TEXT NOT NULL,
+      topic_summary TEXT NOT NULL DEFAULT 'Keine Beschreibung',
       file_name TEXT NOT NULL,
       file_data BYTEA NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -75,11 +75,17 @@ export async function ensurePastTestsSchema() {
 
     -- Keep this for existing databases created before topic_summary was introduced.
     ALTER TABLE past_tests
-      ADD COLUMN IF NOT EXISTS topic_summary TEXT NOT NULL DEFAULT 'Keine Beschreibung';
+      ADD COLUMN IF NOT EXISTS topic_summary TEXT;
+
+    ALTER TABLE past_tests
+      ALTER COLUMN topic_summary SET DEFAULT 'Keine Beschreibung';
 
     UPDATE past_tests
       SET topic_summary = 'Keine Beschreibung'
       WHERE topic_summary IS NULL OR BTRIM(topic_summary) = '';
+
+    ALTER TABLE past_tests
+      ALTER COLUMN topic_summary SET NOT NULL;
 
     CREATE INDEX IF NOT EXISTS past_tests_school_level_filter_idx
       ON past_tests (school_level, subject, teacher, test_number, created_at DESC);

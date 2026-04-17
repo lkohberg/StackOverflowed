@@ -8,6 +8,7 @@ export type PastTest = {
   teacher: string;
   test_number: number;
   upload_year: number;
+  topic_summary: string;
   file_name: string;
   created_at: string;
 };
@@ -79,6 +80,7 @@ export async function listPastTests(filters: {
             teacher,
             test_number,
             upload_year,
+            topic_summary,
             file_name,
             created_at
      FROM past_tests
@@ -97,14 +99,15 @@ export async function createPastTest(input: {
   teacher: string;
   testNumber: number;
   uploadYear: number;
+  topicSummary: string;
   fileName: string;
   fileData: Buffer;
 }) {
   await ensurePastTestsSchema();
 
   const result = await query<PastTest>(
-    `INSERT INTO past_tests (class_name, school_level, subject, teacher, test_number, upload_year, file_name, file_data)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `INSERT INTO past_tests (class_name, school_level, subject, teacher, test_number, upload_year, topic_summary, file_name, file_data)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      RETURNING id,
                COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
                class_name,
@@ -112,6 +115,7 @@ export async function createPastTest(input: {
                teacher,
                test_number,
                upload_year,
+               topic_summary,
                file_name,
                created_at;`,
     [
@@ -121,6 +125,7 @@ export async function createPastTest(input: {
       input.teacher,
       input.testNumber,
       input.uploadYear,
+      input.topicSummary,
       input.fileName,
       input.fileData,
     ],
@@ -140,6 +145,7 @@ export async function getPastTestFile(id: number) {
             teacher,
             test_number,
             upload_year,
+            topic_summary,
             file_name,
             file_data,
             created_at
@@ -169,6 +175,7 @@ export async function getPastTestFile(id: number) {
     teacher: row.teacher,
     test_number: row.test_number,
     upload_year: row.upload_year,
+    topic_summary: row.topic_summary,
     file_name: row.file_name,
     file_data: fileData,
     created_at: row.created_at,

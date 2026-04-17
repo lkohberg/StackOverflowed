@@ -60,6 +60,7 @@ export async function ensurePastTestsSchema() {
       teacher TEXT NOT NULL,
       test_number SMALLINT NOT NULL,
       upload_year INTEGER NOT NULL,
+      topic_summary TEXT NOT NULL,
       file_name TEXT NOT NULL,
       file_data BYTEA NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -71,6 +72,10 @@ export async function ensurePastTestsSchema() {
     -- Keep this for existing databases created before school_level was introduced.
     ALTER TABLE past_tests
       ADD COLUMN IF NOT EXISTS school_level TEXT;
+
+    -- Keep this for existing databases created before topic_summary was introduced.
+    ALTER TABLE past_tests
+      ADD COLUMN IF NOT EXISTS topic_summary TEXT NOT NULL DEFAULT '';
 
     CREATE INDEX IF NOT EXISTS past_tests_school_level_filter_idx
       ON past_tests (school_level, subject, teacher, test_number, created_at DESC);

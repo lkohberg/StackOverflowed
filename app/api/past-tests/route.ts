@@ -128,6 +128,7 @@ export async function POST(request: Request) {
     const teacher = normalizeText(formData.get("teacher"));
     const testNumberValue = normalizeText(formData.get("testNumber"));
     const uploadYearValue = normalizeText(formData.get("uploadYear"));
+    const topicSummary = normalizeText(formData.get("topicSummary"));
     const fileEntry = formData.get("file");
 
     const testNumber = parseInteger(testNumberValue);
@@ -158,6 +159,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Bitte ein gültiges Upload-Jahr angeben." }, { status: 400 });
     }
 
+    if (!topicSummary) {
+      return NextResponse.json(
+        { error: "Bitte eine kurze stichwortartige Beschreibung des Stoffs angeben." },
+        { status: 400 },
+      );
+    }
+
     if (!(fileEntry instanceof File) || fileEntry.size <= 0) {
       return NextResponse.json({ error: "Bitte eine ZIP-Datei auswählen." }, { status: 400 });
     }
@@ -175,6 +183,7 @@ export async function POST(request: Request) {
       teacher,
       testNumber,
       uploadYear,
+      topicSummary,
       fileName: fileEntry.name,
       fileData: fileBuffer,
     });

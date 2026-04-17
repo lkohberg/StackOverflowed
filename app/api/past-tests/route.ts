@@ -56,7 +56,7 @@ export async function GET(request: Request) {
 
       const encodedFileName = encodeURIComponent(testFile.file_name);
 
-      return new NextResponse(testFile.file_data, {
+      return new NextResponse(new Uint8Array(testFile.file_data), {
         headers: {
           "Content-Type": "application/zip",
           "Content-Disposition": `attachment; filename*=UTF-8''${encodedFileName}`,

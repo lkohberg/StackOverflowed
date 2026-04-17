@@ -21,6 +21,7 @@ function getPool() {
 
 const schemaReady = {
   games: false,
+  links: false,
   pastTests: false,
 };
 
@@ -42,6 +43,26 @@ export async function ensureGamesSchema() {
   `);
 
   schemaReady.games = true;
+}
+
+export async function ensureLinksSchema() {
+  if (schemaReady.links) {
+    return;
+  }
+
+  const pool = getPool();
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS links (
+      id BIGSERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      url TEXT NOT NULL UNIQUE,
+      description TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  schemaReady.links = true;
 }
 
 export async function ensurePastTestsSchema() {

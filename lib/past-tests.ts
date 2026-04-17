@@ -49,6 +49,7 @@ export async function listPastTests(filters: {
 
   if (filters.schoolLevel) {
     values.push(filters.schoolLevel);
+    // Legacy rows used class_name like "1ahitn"; fallback extracts the leading school-level digit.
     conditions.push(`COALESCE(school_level, LEFT(class_name, 1)) = $${values.length}`);
   }
 

@@ -275,11 +275,13 @@ export default function PastTestsPage() {
     if (kind === "upload") {
       const uploadId = Number.parseInt(parts[0] ?? "", 10);
       if (Number.isNaN(uploadId)) {
+        setError("Der ausgewählte Upload ist ungültig.");
         return;
       }
 
       const upload = allTests.find((test) => test.id === uploadId);
       if (!upload) {
+        setError("Der ausgewählte Upload wurde nicht gefunden.");
         return;
       }
 
@@ -409,7 +411,7 @@ export default function PastTestsPage() {
               onChange={onHierarchySelectionChange}
               className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
             >
-              <option value="">Großes Dropdown: Schulstufe → Fach → Lehrer → Test → Upload</option>
+              <option value="">Nach Hierarchie filtern: Schulstufe → Fach → Lehrer → Test → Upload</option>
               {hierarchyOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}

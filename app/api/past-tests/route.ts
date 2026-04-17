@@ -81,7 +81,14 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Ungültige Schulstufe." }, { status: 400 });
   }
 
-  if (subject && (!schoolLevel || !isValidSubjectForSchoolLevel(schoolLevel, subject))) {
+  if (subject && !schoolLevel) {
+    return NextResponse.json(
+      { error: "Bitte zuerst eine Schulstufe auswählen, bevor Sie nach Fach filtern." },
+      { status: 400 },
+    );
+  }
+
+  if (subject && !isValidSubjectForSchoolLevel(schoolLevel, subject)) {
     return NextResponse.json({ error: "Ungültiges Fach für die gewählte Schulstufe." }, { status: 400 });
   }
 

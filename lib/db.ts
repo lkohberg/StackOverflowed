@@ -68,6 +68,7 @@ export async function ensurePastTestsSchema() {
     CREATE INDEX IF NOT EXISTS past_tests_filter_idx
       ON past_tests (class_name, subject, teacher, test_number, created_at DESC);
 
+    -- Keep this for existing databases created before school_level was introduced.
     ALTER TABLE past_tests
       ADD COLUMN IF NOT EXISTS school_level TEXT;
 

@@ -68,7 +68,6 @@ function toFilterQuery(filters: FilterState) {
 
 export default function PastTestsPage() {
   const [tests, setTests] = useState<PastTest[]>([]);
-  const [allTests, setAllTests] = useState<PastTest[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,8 +77,6 @@ export default function PastTestsPage() {
     teacher: "",
     testNumber: "",
   });
-  const [hierarchySelection, setHierarchySelection] = useState("");
-  const [selectedUploadId, setSelectedUploadId] = useState<number | null>(null);
   const [uploadForm, setUploadForm] = useState<UploadFormState>({
     schoolLevel: defaultSchoolLevel,
     className: defaultUploaderClass,
@@ -116,48 +113,6 @@ export default function PastTestsPage() {
     [uploadForm.schoolLevel, uploadForm.subject],
   );
 
-  const hierarchyOptions = useMemo(() => {
-    const options: Array<{ value: string; label: string }> = [];
-
-    for (const schoolLevel of SCHOOL_LEVEL_OPTIONS) {
-      options.push({ value: `level|${schoolLevel}`, label: `${schoolLevel}. Schulstufe` });
-
-      const subjects = getSubjectsForSchoolLevel(schoolLevel);
-      for (const subject of subjects) {
-        options.push({ value: `subject|${schoolLevel}|${subject}`, label: `└ ${subject}` });
-
-        const teachers = getTeachersForSubject(schoolLevel, subject);
-        for (const teacher of teachers) {
-          options.push({ value: `teacher|${schoolLevel}|${subject}|${teacher}`, label: `   └ ${teacher}` });
-
-          for (const testNumber of TEST_NUMBER_OPTIONS) {
-            options.push({
-              value: `test|${schoolLevel}|${subject}|${teacher}|${testNumber}`,
-              label: `      └ ${testNumber}. Test`,
-            });
-
-            const uploads = allTests.filter(
-              (test) =>
-                test.school_level === schoolLevel &&
-                test.subject === subject &&
-                test.teacher === teacher &&
-                test.test_number === testNumber,
-            );
-
-            for (const upload of uploads) {
-              options.push({
-                value: `upload|${upload.id}`,
-                label: `         └ ${upload.upload_year}: ${upload.file_name}`,
-              });
-            }
-          }
-        }
-      }
-    }
-
-    return options;
-  }, [allTests]);
-
   const loadTests = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -181,34 +136,12 @@ export default function PastTestsPage() {
     }
   }, [filters]);
 
-  const loadAllTests = useCallback(async () => {
-    try {
-      const response = await fetch("/api/past-tests", { cache: "no-store" });
-
-      if (!response.ok) {
-        setError("Das hierarchische Dropdown konnte nicht vollständig geladen werden. Bitte Seite neu laden.");
-        return;
-      }
-
-      const payload = (await response.json()) as { tests: PastTest[] };
-      setAllTests(payload.tests);
-    } catch {
-      // keep existing list when refresh fails
-    }
-  }, []);
-
   useEffect(() => {
     loadTests();
   }, [loadTests]);
 
-  useEffect(() => {
-    loadAllTests();
-  }, [loadAllTests]);
-
   const onFilterSchoolLevelChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const schoolLevel = event.target.value;
-    setHierarchySelection("");
-    setSelectedUploadId(null);
 
     setFilters({
       schoolLevel,
@@ -220,8 +153,6 @@ export default function PastTestsPage() {
 
   const onFilterSubjectChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const subject = event.target.value;
-    setHierarchySelection("");
-    setSelectedUploadId(null);
 
     setFilters((current) => ({
       ...current,
@@ -229,74 +160,6 @@ export default function PastTestsPage() {
       teacher: "",
       testNumber: "",
     }));
-  };
-
-  const onHierarchySelectionChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setHierarchySelection(value);
-    setSelectedUploadId(null);
-
-    if (!value) {
-      setFilters({ schoolLevel: "", subject: "", teacher: "", testNumber: "" });
-      return;
-    }
-
-    const [kind, ...parts] = value.split("|");
-
-    if (kind === "level") {
-      setFilters({ schoolLevel: parts[0] ?? "", subject: "", teacher: "", testNumber: "" });
-      return;
-    }
-
-    if (kind === "subject") {
-      setFilters({ schoolLevel: parts[0] ?? "", subject: parts[1] ?? "", teacher: "", testNumber: "" });
-      return;
-    }
-
-    if (kind === "teacher") {
-      setFilters({
-        schoolLevel: parts[0] ?? "",
-        subject: parts[1] ?? "",
-        teacher: parts[2] ?? "",
-        testNumber: "",
-      });
-      return;
-    }
-
-    if (kind === "test") {
-      setFilters({
-        schoolLevel: parts[0] ?? "",
-        subject: parts[1] ?? "",
-        teacher: parts[2] ?? "",
-        testNumber: parts[3] ?? "",
-      });
-      return;
-    }
-
-    if (kind === "upload") {
-      const uploadId = Number.parseInt(parts[0] ?? "", 10);
-      if (Number.isNaN(uploadId)) {
-        setError("Der ausgewählte Upload ist ungültig (fehlerhafte Upload-ID).");
-        return;
-      }
-
-      const upload = allTests.find((test) => test.id === uploadId);
-      if (!upload) {
-        setError("Der ausgewählte Upload wurde nicht gefunden. Bitte Dropdown aktualisieren oder neu laden.");
-        return;
-      }
-
-      setSelectedUploadId(upload.id);
-      setFilters({
-        schoolLevel: upload.school_level,
-        subject: upload.subject,
-        teacher: upload.teacher,
-        testNumber: String(upload.test_number),
-      });
-      return;
-    }
-
-    setError(`Die Auswahl im hierarchischen Dropdown ist ungültig (Typ: ${kind}).`);
   };
 
   const onUploadClassChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -387,15 +250,13 @@ export default function PastTestsPage() {
         fileInput.value = "";
       }
 
-      await Promise.all([loadTests(), loadAllTests()]);
+      await loadTests();
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Test konnte nicht hochgeladen werden.");
     } finally {
       setSubmitting(false);
     }
   };
-
-  const displayedTests = selectedUploadId ? tests.filter((test) => test.id === selectedUploadId) : tests;
 
   return (
     <div className="w-full px-6 py-8 sm:px-8 lg:px-12">
@@ -410,19 +271,6 @@ export default function PastTestsPage() {
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <h2 className="text-xl font-semibold text-slate-900">Tests durchsuchen</h2>
           <div className="mt-4 grid gap-3">
-            <select
-              value={hierarchySelection}
-              onChange={onHierarchySelectionChange}
-              className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
-            >
-              <option value="">Nach Hierarchie filtern: Schulstufe → Fach → Lehrer → Test → Upload</option>
-              {hierarchyOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-
             <div className="grid gap-3 md:grid-cols-4">
             <select
               value={filters.schoolLevel}
@@ -454,8 +302,6 @@ export default function PastTestsPage() {
             <select
               value={filters.teacher}
               onChange={(event) => {
-                setHierarchySelection("");
-                setSelectedUploadId(null);
                 setFilters((current) => ({ ...current, teacher: event.target.value }));
               }}
               disabled={!filters.schoolLevel || !filters.subject}
@@ -472,8 +318,6 @@ export default function PastTestsPage() {
             <select
               value={filters.testNumber}
               onChange={(event) => {
-                setHierarchySelection("");
-                setSelectedUploadId(null);
                 setFilters((current) => ({ ...current, testNumber: event.target.value }));
               }}
               className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
@@ -490,11 +334,11 @@ export default function PastTestsPage() {
 
           {loading ? <p className="mt-4 text-slate-600">Tests werden geladen...</p> : null}
 
-          {!loading && displayedTests.length === 0 ? (
+          {!loading && tests.length === 0 ? (
             <p className="mt-4 text-slate-600">Keine Tests für die aktuelle Auswahl gefunden.</p>
           ) : (
             <ul className="mt-4 grid gap-3">
-              {displayedTests.map((test) => (
+              {tests.map((test) => (
                 <li key={test.id} className="rounded-lg border border-slate-200 p-4">
                   <p className="text-sm font-semibold text-slate-900">
                     {test.school_level}. Schulstufe · {test.subject} · {test.teacher} · {test.test_number}. Test

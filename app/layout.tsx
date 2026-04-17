@@ -4,7 +4,7 @@ import { NavBar } from "@/components/NavBar";
 
 export const metadata: Metadata = {
   title: "StackOverflowed",
-  description: "A student hub for IT students at HTL Steyr",
+  description: "Ein Hub für IT-Schülerinnen und IT-Schüler der HTL Steyr",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="de" className="h-full antialiased">
       <body className="min-h-full bg-white text-slate-900">
         <NavBar />
         <main className="w-full">{children}</main>

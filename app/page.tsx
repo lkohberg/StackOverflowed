@@ -1,14 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import htlHeroImage from "@/images/htl-panorama-16-4.jpg";
+import alexandreDebieveImage from "@/images/alexandre-debieve-fo7jilwjotu-unsplash.webp";
+import arduinoImage from "@/images/arduino-4916880_960_720.jpg";
+import boardImage from "@/images/board-4855963_960_720.jpg";
+import sourceImage from "@/images/source-4280758_960_720.jpg";
+import technicalDrawingImage from "@/images/technical-drawing-3324368_960_720.jpg";
+import workshopImage from "@/images/workshop-3758513_960_720.jpg";
 
 const gridImages = [
-  { id: "hof", alt: "HTL Steyr panorama, school courtyard", objectPosition: "center 22%", label: "Da Hof" },
-  { id: "einfahrt", alt: "HTL Steyr panorama, building front", objectPosition: "center 35%", label: "D'Einfahrt" },
-  { id: "dach", alt: "HTL Steyr panorama, roofline detail", objectPosition: "center 45%", label: "S'Dachl" },
-  { id: "wiese", alt: "HTL Steyr panorama, grassy campus edge", objectPosition: "center 58%", label: "Da Wiesnrand" },
-  { id: "fenster", alt: "HTL Steyr panorama, window section", objectPosition: "center 68%", label: "De Fensterreiha" },
-  { id: "himmel", alt: "HTL Steyr panorama, skyline above campus", objectPosition: "center 80%", label: "Da Himmel drüber" },
+  { id: "alexandre-debieve", src: alexandreDebieveImage, alt: "Person programmiert auf einem Laptop in einem dunklen Arbeitsbereich" },
+  { id: "arduino", src: arduinoImage, alt: "Nahaufnahme eines Arduino-Boards mit farbigen Kabeln" },
+  { id: "board", src: boardImage, alt: "Leiterplatte und elektronische Bauteile auf einer Werkbank" },
+  { id: "source", src: sourceImage, alt: "Quellcode auf einem Monitor mit blauer Oberfläche" },
+  { id: "technical-drawing", src: technicalDrawingImage, alt: "Technische Zeichenwerkzeuge auf Blaupausenpapier" },
+  { id: "workshop", src: workshopImage, alt: "Technische Werkstatt mit Maschinen und Industrieausrüstung" },
 ];
 
 export default function Home() {
@@ -21,7 +27,7 @@ export default function Home() {
             I Mog<br />Nimma.
           </h1>
           <p className="max-w-3xl text-sm leading-relaxed text-slate-500 sm:text-base lg:pt-2">
-            <em>„Wenn ma si auskennt, is ma scho z&apos;spät.&rdquo;</em><br />
+            <em>„Du kennst di aus? Na duast&apos;ned.&rdquo;</em><br />
             <span>—Confucius, wahrscheinlich</span>
           </p>
         </div>
@@ -68,26 +74,26 @@ export default function Home() {
 
       {/* Image grid */}
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-2 bg-white px-4 sm:grid-cols-3 sm:px-8 lg:grid-cols-3 lg:px-12">
-        {gridImages.map((img, index) => (
+        {gridImages.map((img) => (
           <div
             key={img.id}
-            className={`relative aspect-[4/3] overflow-hidden rounded-sm bg-white ${index > 3 ? "hidden sm:block" : ""}`}
+            className="relative aspect-[4/3] overflow-hidden rounded-sm bg-white"
           >
-            <div
-              role="img"
-              aria-label={img.alt}
-              className="absolute inset-0 transition-transform duration-300 hover:scale-105"
-              style={{
-                backgroundImage: `url(${htlHeroImage.src})`,
-                backgroundSize: "cover",
-                backgroundPosition: img.objectPosition,
-              }}
+            <Image
+              src={img.src}
+              alt={img.alt}
+              fill
+              sizes="(min-width: 640px) 33vw, 100vw"
+              className="object-cover transition-transform duration-300 hover:scale-105"
             />
-            <span className="absolute bottom-2 left-2 rounded bg-black/60 px-2 py-1 text-xs text-white">
-              {img.label}
-            </span>
           </div>
         ))}
+      </div>
+
+      <div className="w-full px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
+        <p className="text-3xl font-extrabold italic leading-tight text-slate-700 sm:text-5xl md:text-6xl">
+          Geh ned in die HTL – alle, die schon dort sind!
+        </p>
       </div>
 
       <footer className="mt-10 w-full bg-black px-4 py-10 text-zinc-100 sm:px-8 sm:py-12 lg:px-12">
@@ -95,18 +101,19 @@ export default function Home() {
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-zinc-400">Zum Schluss no a Schmäh</p>
             <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-zinc-200 sm:text-base">
-              <li>{`"Heit lern i fix früh ... oba erst nachm Leberkassemmerl."`}</li>
-              <li>{`"Da Code laft nur am Freitag, weil unter da Wochn is er im Krankenstand."`}</li>
+              <li>{`"Heit lern i fix ... oba erst nochm ersten Bier."`}</li>
+              <li>{`"Schwänzen? Bledsinn des is Zeitausgleich"`}</li>
               <li>{`"Wenn's in da Werkstatt raucht, is ned immer da Lötkolben schuld."`}</li>
-              <li>{`"I hob ka Bug baut — des is a österreichische Spezialfunktion."`}</li>
+              <li>{`"Des is ka bug, des is a feature."`}</li>
             </ul>
           </div>
 
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
             <hr className="hidden flex-1 border-zinc-700 sm:block" />
             <div className="flex gap-5">
-              <Link href="/browser-games" className="text-sm text-zinc-300 transition-colors hover:text-white">Browser Games</Link>
-              <Link href="/past-tests" className="text-sm text-zinc-300 transition-colors hover:text-white">Past Tests</Link>
+              <Link href="/browser-games" className="text-sm text-zinc-300 transition-colors hover:text-white">Browser-Spiele</Link>
+              <Link href="/past-tests" className="text-sm text-zinc-300 transition-colors hover:text-white">Alte Tests</Link>
+              <Link href="/formulare" className="text-sm text-zinc-300 transition-colors hover:text-white">Formulare</Link>
             </div>
             <hr className="hidden flex-1 border-zinc-700 sm:block" />
           </div>

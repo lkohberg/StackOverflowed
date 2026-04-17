@@ -75,7 +75,11 @@ export async function ensurePastTestsSchema() {
 
     -- Keep this for existing databases created before topic_summary was introduced.
     ALTER TABLE past_tests
-      ADD COLUMN IF NOT EXISTS topic_summary TEXT NOT NULL DEFAULT '';
+      ADD COLUMN IF NOT EXISTS topic_summary TEXT NOT NULL DEFAULT 'Keine Beschreibung';
+
+    UPDATE past_tests
+      SET topic_summary = 'Keine Beschreibung'
+      WHERE topic_summary IS NULL OR BTRIM(topic_summary) = '';
 
     CREATE INDEX IF NOT EXISTS past_tests_school_level_filter_idx
       ON past_tests (school_level, subject, teacher, test_number, created_at DESC);

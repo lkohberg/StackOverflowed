@@ -351,7 +351,9 @@ export default function PastTestsPage() {
                   <p className="mt-1 text-sm text-slate-600">
                     Absenderklasse: {test.class_name} · Upload-Jahr: {test.upload_year} · Datei: {test.file_name}
                   </p>
-                  <p className="mt-1 text-sm text-slate-600">Stoff: {test.topic_summary}</p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Stoff: {test.topic_summary.trim() || "Keine Beschreibung"}
+                  </p>
                   <a
                     href={`/api/past-tests?downloadId=${test.id}`}
                     className="mt-3 inline-flex rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"

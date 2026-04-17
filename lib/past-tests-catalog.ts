@@ -1,8 +1,10 @@
-export const CLASS_OPTIONS = ["1ahitn", "2ahitn", "3ahitn", "4ahitn", "5ahitn"] as const;
+export const AHITN_CLASS_OPTIONS = ["1ahitn", "2ahitn", "3ahitn", "4ahitn", "5ahitn"] as const;
+export const SCHOOL_LEVEL_OPTIONS = ["1", "2", "3", "4", "5"] as const;
 
 export const TEST_NUMBER_OPTIONS = [1, 2, 3, 4] as const;
 
-export type ClassName = (typeof CLASS_OPTIONS)[number];
+export type AhitnClassName = (typeof AHITN_CLASS_OPTIONS)[number];
+export type SchoolLevel = (typeof SCHOOL_LEVEL_OPTIONS)[number];
 
 export type SubjectTeachers = {
   subject: string;
@@ -45,41 +47,45 @@ const thirdYearSubjects: SubjectTeachers[] = [
   { subject: "ITP2", teachers: ["SAMC"] },
 ];
 
-export const PAST_TESTS_CATALOG: Record<ClassName, SubjectTeachers[]> = {
-  "1ahitn": firstYearSubjects,
-  "2ahitn": secondYearSubjects,
-  "3ahitn": thirdYearSubjects,
-  "4ahitn": thirdYearSubjects,
-  "5ahitn": thirdYearSubjects,
+export const PAST_TESTS_CATALOG: Record<SchoolLevel, SubjectTeachers[]> = {
+  "1": firstYearSubjects,
+  "2": secondYearSubjects,
+  "3": thirdYearSubjects,
+  "4": thirdYearSubjects,
+  "5": thirdYearSubjects,
 };
 
-export function isValidClassName(value: string): value is ClassName {
-  return CLASS_OPTIONS.includes(value as ClassName);
+export function isValidAhitnClassName(value: string): value is AhitnClassName {
+  return AHITN_CLASS_OPTIONS.includes(value as AhitnClassName);
 }
 
-export function getSubjectsForClass(className: string) {
-  if (!isValidClassName(className)) {
+export function isValidSchoolLevel(value: string): value is SchoolLevel {
+  return SCHOOL_LEVEL_OPTIONS.includes(value as SchoolLevel);
+}
+
+export function getSubjectsForSchoolLevel(schoolLevel: string) {
+  if (!isValidSchoolLevel(schoolLevel)) {
     return [];
   }
 
-  return PAST_TESTS_CATALOG[className].map((entry) => entry.subject);
+  return PAST_TESTS_CATALOG[schoolLevel].map((entry) => entry.subject);
 }
 
-export function getTeachersForSubject(className: string, subject: string) {
-  if (!isValidClassName(className)) {
+export function getTeachersForSubject(schoolLevel: string, subject: string) {
+  if (!isValidSchoolLevel(schoolLevel)) {
     return [];
   }
 
-  const match = PAST_TESTS_CATALOG[className].find((entry) => entry.subject === subject);
+  const match = PAST_TESTS_CATALOG[schoolLevel].find((entry) => entry.subject === subject);
   return match?.teachers ?? [];
 }
 
-export function isValidSubjectForClass(className: string, subject: string) {
-  return getSubjectsForClass(className).includes(subject);
+export function isValidSubjectForSchoolLevel(schoolLevel: string, subject: string) {
+  return getSubjectsForSchoolLevel(schoolLevel).includes(subject);
 }
 
-export function isValidTeacherForClassSubject(className: string, subject: string, teacher: string) {
-  return getTeachersForSubject(className, subject).includes(teacher);
+export function isValidTeacherForSchoolLevelSubject(schoolLevel: string, subject: string, teacher: string) {
+  return getTeachersForSubject(schoolLevel, subject).includes(teacher);
 }
 
 export function isValidTestNumber(value: number) {

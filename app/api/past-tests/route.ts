@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createPastTest, getPastTestFile, listPastTests } from "@/lib/past-tests";
 import {
-  isValidClassName,
-  isValidSubjectForClass,
-  isValidTeacherForClassSubject,
+  isValidAhitnClassName,
+  isValidSchoolLevel,
+  isValidSubjectForSchoolLevel,
+  isValidTeacherForSchoolLevelSubject,
   isValidTestNumber,
 } from "@/lib/past-tests-catalog";
 
@@ -69,22 +70,32 @@ export async function GET(request: Request) {
     }
   }
 
-  const className = (searchParams.get("className") ?? "").trim();
+  const schoolLevel = (searchParams.get("schoolLevel") ?? "").trim();
   const subject = (searchParams.get("subject") ?? "").trim();
   const teacher = (searchParams.get("teacher") ?? "").trim();
   const testNumberValue = (searchParams.get("testNumber") ?? "").trim();
 
   const testNumber = testNumberValue ? parseInteger(testNumberValue) : null;
 
-  if (className && !isValidClassName(className)) {
-    return NextResponse.json({ error: "Ungültige Klasse." }, { status: 400 });
+  if (schoolLevel && !isValidSchoolLevel(schoolLevel)) {
+    return NextResponse.json({ error: "Ungültige Schulstufe." }, { status: 400 });
   }
 
-  if (subject && (!className || !isValidSubjectForClass(className, subject))) {
-    return NextResponse.json({ error: "Ungültiges Fach für die gewählte Klasse." }, { status: 400 });
+  if (subject && !schoolLevel) {
+    return NextResponse.json(
+      { error: "Bitte zuerst eine Schulstufe auswählen, bevor Sie nach Fach filtern." },
+      { status: 400 },
+    );
   }
 
-  if (teacher && (!className || !subject || !isValidTeacherForClassSubject(className, subject, teacher))) {
+  if (subject && !isValidSubjectForSchoolLevel(schoolLevel, subject)) {
+    return NextResponse.json({ error: "Ungültiges Fach für die gewählte Schulstufe." }, { status: 400 });
+  }
+
+  if (
+    teacher &&
+    (!schoolLevel || !subject || !isValidTeacherForSchoolLevelSubject(schoolLevel, subject, teacher))
+  ) {
     return NextResponse.json({ error: "Ungültiger Lehrer für das gewählte Fach." }, { status: 400 });
   }
 
@@ -94,7 +105,7 @@ export async function GET(request: Request) {
 
   try {
     const tests = await listPastTests({
-      className: className || undefined,
+      schoolLevel: schoolLevel || undefined,
       subject: subject || undefined,
       teacher: teacher || undefined,
       testNumber: testNumber ?? undefined,
@@ -112,6 +123,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
 
     const className = normalizeText(formData.get("className"));
+    const schoolLevel = normalizeText(formData.get("schoolLevel"));
     const subject = normalizeText(formData.get("subject"));
     const teacher = normalizeText(formData.get("teacher"));
     const testNumberValue = normalizeText(formData.get("testNumber"));
@@ -122,15 +134,19 @@ export async function POST(request: Request) {
     const uploadYear = parseInteger(uploadYearValue);
     const currentYear = new Date().getFullYear();
 
-    if (!isValidClassName(className)) {
-      return NextResponse.json({ error: "Bitte eine gültige Klasse auswählen." }, { status: 400 });
+    if (!isValidAhitnClassName(className)) {
+      return NextResponse.json({ error: "Bitte eine gültige Absenderklasse auswählen." }, { status: 400 });
     }
 
-    if (!isValidSubjectForClass(className, subject)) {
+    if (!isValidSchoolLevel(schoolLevel)) {
+      return NextResponse.json({ error: "Bitte eine gültige Schulstufe auswählen." }, { status: 400 });
+    }
+
+    if (!isValidSubjectForSchoolLevel(schoolLevel, subject)) {
       return NextResponse.json({ error: "Bitte ein gültiges Fach auswählen." }, { status: 400 });
     }
 
-    if (!isValidTeacherForClassSubject(className, subject, teacher)) {
+    if (!isValidTeacherForSchoolLevelSubject(schoolLevel, subject, teacher)) {
       return NextResponse.json({ error: "Bitte einen gültigen Lehrer auswählen." }, { status: 400 });
     }
 
@@ -153,6 +169,7 @@ export async function POST(request: Request) {
     const fileBuffer = Buffer.from(await fileEntry.arrayBuffer());
 
     const savedTest = await createPastTest({
+      schoolLevel,
       className,
       subject,
       teacher,

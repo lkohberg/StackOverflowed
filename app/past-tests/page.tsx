@@ -2,14 +2,16 @@
 
 import { ChangeEvent, FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
-  CLASS_OPTIONS,
+  AHITN_CLASS_OPTIONS,
+  SCHOOL_LEVEL_OPTIONS,
   TEST_NUMBER_OPTIONS,
-  getSubjectsForClass,
+  getSubjectsForSchoolLevel,
   getTeachersForSubject,
 } from "@/lib/past-tests-catalog";
 
 type PastTest = {
   id: number;
+  school_level: string;
   class_name: string;
   subject: string;
   teacher: string;
@@ -20,11 +22,13 @@ type PastTest = {
 };
 
 const currentYear = new Date().getFullYear();
-const defaultClassName = CLASS_OPTIONS[0];
-const defaultSubject = getSubjectsForClass(defaultClassName)[0] ?? "";
-const defaultTeacher = getTeachersForSubject(defaultClassName, defaultSubject)[0] ?? "";
+const defaultSchoolLevel = SCHOOL_LEVEL_OPTIONS[0];
+const defaultUploaderClass = AHITN_CLASS_OPTIONS[0];
+const defaultSubject = getSubjectsForSchoolLevel(defaultSchoolLevel)[0] ?? "";
+const defaultTeacher = getTeachersForSubject(defaultSchoolLevel, defaultSubject)[0] ?? "";
 
 type UploadFormState = {
+  schoolLevel: string;
   className: string;
   subject: string;
   teacher: string;
@@ -34,7 +38,7 @@ type UploadFormState = {
 };
 
 type FilterState = {
-  className: string;
+  schoolLevel: string;
   subject: string;
   teacher: string;
   testNumber: string;
@@ -43,8 +47,8 @@ type FilterState = {
 function toFilterQuery(filters: FilterState) {
   const params = new URLSearchParams();
 
-  if (filters.className) {
-    params.set("className", filters.className);
+  if (filters.schoolLevel) {
+    params.set("schoolLevel", filters.schoolLevel);
   }
 
   if (filters.subject) {
@@ -64,17 +68,21 @@ function toFilterQuery(filters: FilterState) {
 
 export default function PastTestsPage() {
   const [tests, setTests] = useState<PastTest[]>([]);
+  const [allTests, setAllTests] = useState<PastTest[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
-    className: "",
+    schoolLevel: "",
     subject: "",
     teacher: "",
     testNumber: "",
   });
+  const [hierarchySelection, setHierarchySelection] = useState("");
+  const [selectedUploadId, setSelectedUploadId] = useState<number | null>(null);
   const [uploadForm, setUploadForm] = useState<UploadFormState>({
-    className: defaultClassName,
+    schoolLevel: defaultSchoolLevel,
+    className: defaultUploaderClass,
     subject: defaultSubject,
     teacher: defaultTeacher,
     testNumber: String(TEST_NUMBER_OPTIONS[0]),
@@ -83,30 +91,72 @@ export default function PastTestsPage() {
   });
 
   const filterSubjectOptions = useMemo(() => {
-    if (!filters.className) {
+    if (!filters.schoolLevel) {
       return [];
     }
 
-    return getSubjectsForClass(filters.className);
-  }, [filters.className]);
+    return getSubjectsForSchoolLevel(filters.schoolLevel);
+  }, [filters.schoolLevel]);
 
   const filterTeacherOptions = useMemo(() => {
-    if (!filters.className || !filters.subject) {
+    if (!filters.schoolLevel || !filters.subject) {
       return [];
     }
 
-    return getTeachersForSubject(filters.className, filters.subject);
-  }, [filters.className, filters.subject]);
+    return getTeachersForSubject(filters.schoolLevel, filters.subject);
+  }, [filters.schoolLevel, filters.subject]);
 
   const uploadSubjectOptions = useMemo(
-    () => getSubjectsForClass(uploadForm.className),
-    [uploadForm.className],
+    () => getSubjectsForSchoolLevel(uploadForm.schoolLevel),
+    [uploadForm.schoolLevel],
   );
 
   const uploadTeacherOptions = useMemo(
-    () => getTeachersForSubject(uploadForm.className, uploadForm.subject),
-    [uploadForm.className, uploadForm.subject],
+    () => getTeachersForSubject(uploadForm.schoolLevel, uploadForm.subject),
+    [uploadForm.schoolLevel, uploadForm.subject],
   );
+
+  const hierarchyOptions = useMemo(() => {
+    const options: Array<{ value: string; label: string }> = [];
+
+    for (const schoolLevel of SCHOOL_LEVEL_OPTIONS) {
+      options.push({ value: `level|${schoolLevel}`, label: `${schoolLevel}. Schulstufe` });
+
+      const subjects = getSubjectsForSchoolLevel(schoolLevel);
+      for (const subject of subjects) {
+        options.push({ value: `subject|${schoolLevel}|${subject}`, label: `└ ${subject}` });
+
+        const teachers = getTeachersForSubject(schoolLevel, subject);
+        for (const teacher of teachers) {
+          options.push({ value: `teacher|${schoolLevel}|${subject}|${teacher}`, label: `   └ ${teacher}` });
+
+          for (const testNumber of TEST_NUMBER_OPTIONS) {
+            options.push({
+              value: `test|${schoolLevel}|${subject}|${teacher}|${testNumber}`,
+              label: `      └ ${testNumber}. Test`,
+            });
+
+            const uploads = allTests.filter(
+              (test) =>
+                test.school_level === schoolLevel &&
+                test.subject === subject &&
+                test.teacher === teacher &&
+                test.test_number === testNumber,
+            );
+
+            for (const upload of uploads) {
+              options.push({
+                value: `upload|${upload.id}`,
+                label: `         └ ${upload.upload_year}: ${upload.file_name}`,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return options;
+  }, [allTests]);
 
   const loadTests = useCallback(async () => {
     setLoading(true);
@@ -131,15 +181,37 @@ export default function PastTestsPage() {
     }
   }, [filters]);
 
+  const loadAllTests = useCallback(async () => {
+    try {
+      const response = await fetch("/api/past-tests", { cache: "no-store" });
+
+      if (!response.ok) {
+        setError("Das hierarchische Dropdown konnte nicht vollständig geladen werden. Bitte Seite neu laden.");
+        return;
+      }
+
+      const payload = (await response.json()) as { tests: PastTest[] };
+      setAllTests(payload.tests);
+    } catch {
+      // keep existing list when refresh fails
+    }
+  }, []);
+
   useEffect(() => {
     loadTests();
   }, [loadTests]);
 
-  const onFilterClassChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const className = event.target.value;
+  useEffect(() => {
+    loadAllTests();
+  }, [loadAllTests]);
+
+  const onFilterSchoolLevelChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const schoolLevel = event.target.value;
+    setHierarchySelection("");
+    setSelectedUploadId(null);
 
     setFilters({
-      className,
+      schoolLevel,
       subject: "",
       teacher: "",
       testNumber: "",
@@ -148,6 +220,8 @@ export default function PastTestsPage() {
 
   const onFilterSubjectChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const subject = event.target.value;
+    setHierarchySelection("");
+    setSelectedUploadId(null);
 
     setFilters((current) => ({
       ...current,
@@ -157,16 +231,93 @@ export default function PastTestsPage() {
     }));
   };
 
+  const onHierarchySelectionChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setHierarchySelection(value);
+    setSelectedUploadId(null);
+
+    if (!value) {
+      setFilters({ schoolLevel: "", subject: "", teacher: "", testNumber: "" });
+      return;
+    }
+
+    const [kind, ...parts] = value.split("|");
+
+    if (kind === "level") {
+      setFilters({ schoolLevel: parts[0] ?? "", subject: "", teacher: "", testNumber: "" });
+      return;
+    }
+
+    if (kind === "subject") {
+      setFilters({ schoolLevel: parts[0] ?? "", subject: parts[1] ?? "", teacher: "", testNumber: "" });
+      return;
+    }
+
+    if (kind === "teacher") {
+      setFilters({
+        schoolLevel: parts[0] ?? "",
+        subject: parts[1] ?? "",
+        teacher: parts[2] ?? "",
+        testNumber: "",
+      });
+      return;
+    }
+
+    if (kind === "test") {
+      setFilters({
+        schoolLevel: parts[0] ?? "",
+        subject: parts[1] ?? "",
+        teacher: parts[2] ?? "",
+        testNumber: parts[3] ?? "",
+      });
+      return;
+    }
+
+    if (kind === "upload") {
+      const uploadId = Number.parseInt(parts[0] ?? "", 10);
+      if (Number.isNaN(uploadId)) {
+        setError("Der ausgewählte Upload ist ungültig (fehlerhafte Upload-ID).");
+        return;
+      }
+
+      const upload = allTests.find((test) => test.id === uploadId);
+      if (!upload) {
+        setError("Der ausgewählte Upload wurde nicht gefunden. Bitte Dropdown aktualisieren oder neu laden.");
+        return;
+      }
+
+      setSelectedUploadId(upload.id);
+      setFilters({
+        schoolLevel: upload.school_level,
+        subject: upload.subject,
+        teacher: upload.teacher,
+        testNumber: String(upload.test_number),
+      });
+      return;
+    }
+
+    setError(`Die Auswahl im hierarchischen Dropdown ist ungültig (Typ: ${kind}).`);
+  };
+
   const onUploadClassChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const className = event.target.value;
-    const subjects = getSubjectsForClass(className);
-    const subject = subjects[0] ?? "";
-    const teachers = getTeachersForSubject(className, subject);
-    const teacher = teachers[0] ?? "";
 
     setUploadForm((current) => ({
       ...current,
       className,
+    }));
+  };
+
+  const onUploadSchoolLevelChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const schoolLevel = event.target.value;
+    const subjects = getSubjectsForSchoolLevel(schoolLevel);
+    const subject = subjects[0] ?? "";
+    const teachers = getTeachersForSubject(schoolLevel, subject);
+    const teacher = teachers[0] ?? "";
+
+    setUploadForm((current) => ({
+      ...current,
+      schoolLevel,
       subject,
       teacher,
     }));
@@ -174,7 +325,7 @@ export default function PastTestsPage() {
 
   const onUploadSubjectChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const subject = event.target.value;
-    const teachers = getTeachersForSubject(uploadForm.className, subject);
+    const teachers = getTeachersForSubject(uploadForm.schoolLevel, subject);
     const teacher = teachers[0] ?? "";
 
     setUploadForm((current) => ({
@@ -203,6 +354,7 @@ export default function PastTestsPage() {
     }
 
     const payload = new FormData();
+    payload.set("schoolLevel", uploadForm.schoolLevel);
     payload.set("className", uploadForm.className);
     payload.set("subject", uploadForm.subject);
     payload.set("teacher", uploadForm.teacher);
@@ -235,7 +387,7 @@ export default function PastTestsPage() {
         fileInput.value = "";
       }
 
-      await loadTests();
+      await Promise.all([loadTests(), loadAllTests()]);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Test konnte nicht hochgeladen werden.");
     } finally {
@@ -243,28 +395,44 @@ export default function PastTestsPage() {
     }
   };
 
+  const displayedTests = selectedUploadId ? tests.filter((test) => test.id === selectedUploadId) : tests;
+
   return (
     <div className="w-full px-6 py-8 sm:px-8 lg:px-12">
       <div className="space-y-8">
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Alte Tests</h1>
           <p className="mt-3 text-slate-700">
-            Filtere nach Klasse, Fach, Lehrer und Testnummer oder lade einen neuen Test als ZIP hoch.
+            Filtere nach Schulstufe, Fach, Lehrer und Testnummer oder lade einen neuen Test als ZIP hoch.
           </p>
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <h2 className="text-xl font-semibold text-slate-900">Tests durchsuchen</h2>
-          <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <div className="mt-4 grid gap-3">
             <select
-              value={filters.className}
-              onChange={onFilterClassChange}
+              value={hierarchySelection}
+              onChange={onHierarchySelectionChange}
               className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
             >
-              <option value="">Alle Klassen</option>
-              {CLASS_OPTIONS.map((className) => (
-                <option key={className} value={className}>
-                  {className}
+              <option value="">Nach Hierarchie filtern: Schulstufe → Fach → Lehrer → Test → Upload</option>
+              {hierarchyOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+
+            <div className="grid gap-3 md:grid-cols-4">
+            <select
+              value={filters.schoolLevel}
+              onChange={onFilterSchoolLevelChange}
+              className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+            >
+              <option value="">Alle Schulstufen</option>
+              {SCHOOL_LEVEL_OPTIONS.map((schoolLevel) => (
+                <option key={schoolLevel} value={schoolLevel}>
+                  {schoolLevel}. Schulstufe
                 </option>
               ))}
             </select>
@@ -272,7 +440,7 @@ export default function PastTestsPage() {
             <select
               value={filters.subject}
               onChange={onFilterSubjectChange}
-              disabled={!filters.className}
+              disabled={!filters.schoolLevel}
               className="rounded-md border border-slate-300 px-3 py-2 text-slate-900 disabled:cursor-not-allowed disabled:bg-slate-100"
             >
               <option value="">Alle Fächer</option>
@@ -285,8 +453,12 @@ export default function PastTestsPage() {
 
             <select
               value={filters.teacher}
-              onChange={(event) => setFilters((current) => ({ ...current, teacher: event.target.value }))}
-              disabled={!filters.className || !filters.subject}
+              onChange={(event) => {
+                setHierarchySelection("");
+                setSelectedUploadId(null);
+                setFilters((current) => ({ ...current, teacher: event.target.value }));
+              }}
+              disabled={!filters.schoolLevel || !filters.subject}
               className="rounded-md border border-slate-300 px-3 py-2 text-slate-900 disabled:cursor-not-allowed disabled:bg-slate-100"
             >
               <option value="">Alle Lehrer</option>
@@ -299,7 +471,11 @@ export default function PastTestsPage() {
 
             <select
               value={filters.testNumber}
-              onChange={(event) => setFilters((current) => ({ ...current, testNumber: event.target.value }))}
+              onChange={(event) => {
+                setHierarchySelection("");
+                setSelectedUploadId(null);
+                setFilters((current) => ({ ...current, testNumber: event.target.value }));
+              }}
               className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
             >
               <option value="">Alle Testnummern</option>
@@ -309,21 +485,22 @@ export default function PastTestsPage() {
                 </option>
               ))}
             </select>
+            </div>
           </div>
 
           {loading ? <p className="mt-4 text-slate-600">Tests werden geladen...</p> : null}
 
-          {!loading && tests.length === 0 ? (
+          {!loading && displayedTests.length === 0 ? (
             <p className="mt-4 text-slate-600">Keine Tests für die aktuelle Auswahl gefunden.</p>
           ) : (
             <ul className="mt-4 grid gap-3">
-              {tests.map((test) => (
+              {displayedTests.map((test) => (
                 <li key={test.id} className="rounded-lg border border-slate-200 p-4">
                   <p className="text-sm font-semibold text-slate-900">
-                    {test.class_name} · {test.subject} · {test.teacher} · {test.test_number}. Test
+                    {test.school_level}. Schulstufe · {test.subject} · {test.teacher} · {test.test_number}. Test
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
-                    Upload-Jahr: {test.upload_year} · Datei: {test.file_name}
+                    Absenderklasse: {test.class_name} · Upload-Jahr: {test.upload_year} · Datei: {test.file_name}
                   </p>
                   <a
                     href={`/api/past-tests?downloadId=${test.id}`}
@@ -343,16 +520,32 @@ export default function PastTestsPage() {
           <form onSubmit={handleUpload} className="mt-4 grid gap-4">
             <div className="grid gap-3 md:grid-cols-3">
               <label className="grid gap-1 text-sm text-slate-700">
-                Klasse
+                Absenderklasse
                 <select
                   value={uploadForm.className}
                   onChange={onUploadClassChange}
                   required
                   className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
                 >
-                  {CLASS_OPTIONS.map((className) => (
+                  {AHITN_CLASS_OPTIONS.map((className) => (
                     <option key={className} value={className}>
                       {className}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="grid gap-1 text-sm text-slate-700">
+                Schulstufe des Tests
+                <select
+                  value={uploadForm.schoolLevel}
+                  onChange={onUploadSchoolLevelChange}
+                  required
+                  className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                >
+                  {SCHOOL_LEVEL_OPTIONS.map((schoolLevel) => (
+                    <option key={schoolLevel} value={schoolLevel}>
+                      {schoolLevel}. Schulstufe
                     </option>
                   ))}
                 </select>

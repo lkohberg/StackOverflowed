@@ -55,6 +55,7 @@ export async function ensurePastTestsSchema() {
     CREATE TABLE IF NOT EXISTS past_tests (
       id BIGSERIAL PRIMARY KEY,
       class_name TEXT NOT NULL,
+      school_level TEXT,
       subject TEXT NOT NULL,
       teacher TEXT NOT NULL,
       test_number SMALLINT NOT NULL,
@@ -66,6 +67,13 @@ export async function ensurePastTestsSchema() {
 
     CREATE INDEX IF NOT EXISTS past_tests_filter_idx
       ON past_tests (class_name, subject, teacher, test_number, created_at DESC);
+
+    -- Keep this for existing databases created before school_level was introduced.
+    ALTER TABLE past_tests
+      ADD COLUMN IF NOT EXISTS school_level TEXT;
+
+    CREATE INDEX IF NOT EXISTS past_tests_school_level_filter_idx
+      ON past_tests (school_level, subject, teacher, test_number, created_at DESC);
   `);
 
   schemaReady.pastTests = true;

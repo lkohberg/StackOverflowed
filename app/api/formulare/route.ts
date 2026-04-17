@@ -34,7 +34,8 @@ export async function GET(request: Request) {
   }
 
   const filePath = path.resolve(FORMULARE_DIRECTORY, fileName);
-  if (!filePath.startsWith(`${FORMULARE_DIRECTORY}${path.sep}`)) {
+  const relativePath = path.relative(FORMULARE_DIRECTORY, filePath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
     return NextResponse.json({ error: "Ungültiger Dateiname." }, { status: 400 });
   }
 

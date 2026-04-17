@@ -19,7 +19,7 @@ function toTitle(fileName: string) {
     return fileName;
   }
 
-  return normalized.replace(/\b\w/g, (value) => value.toUpperCase());
+  return normalized.replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 async function listFormulare(): Promise<FormularItem[]> {
@@ -57,6 +57,8 @@ export default async function FormularePage() {
                   <iframe
                     title={`Vorschau ${formular.title}`}
                     src={previewUrl}
+                    loading="lazy"
+                    sandbox="allow-same-origin allow-scripts"
                     className="mt-4 h-80 w-full rounded-md border border-slate-200"
                   />
                   <div className="mt-4">

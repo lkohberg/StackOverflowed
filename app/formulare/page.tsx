@@ -41,26 +41,18 @@ export default async function FormularePage() {
     <div className="w-full px-6 py-8 sm:px-8 lg:px-12">
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Formulare</h1>
-        <p className="mt-4 text-slate-700">Hier findest du alle verfügbaren Formulare mit Vorschau und Download.</p>
+        <p className="mt-4 text-slate-700">Hier findest du alle verfügbaren Formulare zum Download.</p>
 
         {formulare.length === 0 ? (
           <p className="mt-6 text-slate-600">Aktuell sind keine Formulare verfügbar.</p>
         ) : (
-          <ul className="mt-6 grid gap-6">
-            {formulare.map((formular) => {
-              const previewUrl = `/api/formulare?file=${encodeURIComponent(formular.fileName)}`;
-              const downloadUrl = `${previewUrl}&download=1`;
+            <ul className="mt-6 grid gap-6">
+             {formulare.map((formular) => {
+               const downloadUrl = `/api/formulare?file=${encodeURIComponent(formular.fileName)}&download=1`;
 
-              return (
+               return (
                 <li key={formular.fileName} className="rounded-lg border border-slate-200 p-4 sm:p-6">
                   <h2 className="text-xl font-semibold text-slate-900">{formular.title}</h2>
-                  <iframe
-                    title={`Vorschau ${formular.title}`}
-                    src={previewUrl}
-                    loading="lazy"
-                    sandbox="allow-same-origin allow-scripts"
-                    className="mt-4 h-80 w-full rounded-md border border-slate-200"
-                  />
                   <div className="mt-4">
                     <a
                       href={downloadUrl}

@@ -113,6 +113,7 @@ export default function Home() {
             <hr className="hidden flex-1 border-zinc-700 sm:block" />
             <div className="flex gap-5">
               <Link href="/browser-games" className="text-sm text-zinc-300 transition-colors hover:text-white">Browser-Spiele</Link>
+              <Link href="/links" className="text-sm text-zinc-300 transition-colors hover:text-white">Links</Link>
               <Link href="/past-tests" className="text-sm text-zinc-300 transition-colors hover:text-white">Alte Tests</Link>
               <Link href="/formulare" className="text-sm text-zinc-300 transition-colors hover:text-white">Formulare</Link>
             </div>

@@ -186,6 +186,7 @@ export default function PastTestsPage() {
       const response = await fetch("/api/past-tests", { cache: "no-store" });
 
       if (!response.ok) {
+        setError("Das hierarchische Dropdown konnte nicht vollständig geladen werden.");
         return;
       }
 
@@ -292,7 +293,10 @@ export default function PastTestsPage() {
         teacher: upload.teacher,
         testNumber: String(upload.test_number),
       });
+      return;
     }
+
+    setError("Die Auswahl im hierarchischen Dropdown ist ungültig.");
   };
 
   const onUploadClassChange = (event: ChangeEvent<HTMLSelectElement>) => {

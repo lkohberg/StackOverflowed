@@ -17,6 +17,7 @@ type PastTest = {
   teacher: string;
   test_number: number;
   upload_year: number;
+  topic_summary: string;
   file_name: string;
   created_at: string;
 };
@@ -34,6 +35,7 @@ type UploadFormState = {
   teacher: string;
   testNumber: string;
   uploadYear: string;
+  topicSummary: string;
   file: File | null;
 };
 
@@ -84,6 +86,7 @@ export default function PastTestsPage() {
     teacher: defaultTeacher,
     testNumber: String(TEST_NUMBER_OPTIONS[0]),
     uploadYear: String(currentYear),
+    topicSummary: "",
     file: null,
   });
 
@@ -223,6 +226,7 @@ export default function PastTestsPage() {
     payload.set("teacher", uploadForm.teacher);
     payload.set("testNumber", uploadForm.testNumber);
     payload.set("uploadYear", uploadForm.uploadYear);
+    payload.set("topicSummary", uploadForm.topicSummary);
     payload.set("file", uploadForm.file);
 
     setSubmitting(true);
@@ -242,6 +246,7 @@ export default function PastTestsPage() {
       setUploadForm((current) => ({
         ...current,
         uploadYear: String(currentYear),
+        topicSummary: "",
         file: null,
       }));
 
@@ -345,6 +350,9 @@ export default function PastTestsPage() {
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
                     Absenderklasse: {test.class_name} · Upload-Jahr: {test.upload_year} · Datei: {test.file_name}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Stoff: {test.topic_summary?.trim() || "Keine Beschreibung"}
                   </p>
                   <a
                     href={`/api/past-tests?downloadId=${test.id}`}
@@ -473,6 +481,23 @@ export default function PastTestsPage() {
                 />
               </label>
             </div>
+
+            <label className="grid gap-1 text-sm text-slate-700">
+              Stichwortartige Stoff-Beschreibung
+              <textarea
+                value={uploadForm.topicSummary}
+                onChange={(event) =>
+                  setUploadForm((current) => ({
+                    ...current,
+                    topicSummary: event.target.value,
+                  }))
+                }
+                required
+                rows={3}
+                placeholder="z. B. Netzwerktechnik, Routing, VLAN, Subnetting"
+                className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+              />
+            </label>
 
             <label className="grid gap-1 text-sm text-slate-700">
               ZIP-Datei

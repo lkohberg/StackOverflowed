@@ -5,6 +5,9 @@ import { NextResponse } from "next/server";
 
 const FORMULARE_DIRECTORY = path.join(process.cwd(), "formulare");
 
+/**
+ * Validates a file name from request input to allow only PDF files in the top-level formulare directory.
+ */
 function getValidatedFileName(value: string | null) {
   if (!value) {
     return null;
@@ -30,7 +33,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Ungültiger Dateiname." }, { status: 400 });
   }
 
-  const filePath = path.join(FORMULARE_DIRECTORY, fileName);
+  const filePath = path.resolve(FORMULARE_DIRECTORY, fileName);
+  if (!filePath.startsWith(`${FORMULARE_DIRECTORY}${path.sep}`)) {
+    return NextResponse.json({ error: "Ungültiger Dateiname." }, { status: 400 });
+  }
 
   try {
     const fileData = await readFile(filePath);

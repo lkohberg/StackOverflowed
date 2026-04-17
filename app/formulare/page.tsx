@@ -8,6 +8,9 @@ type FormularItem = {
   title: string;
 };
 
+/**
+ * Converts a PDF filename into a user-facing title by stripping extension and normalizing separators.
+ */
 function toTitle(fileName: string) {
   const baseName = fileName.replace(/\.pdf$/i, "");
   const normalized = baseName.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();

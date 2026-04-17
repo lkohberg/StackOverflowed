@@ -19,10 +19,13 @@ function getPool() {
   return global.__stackOverflowedPool;
 }
 
-let schemaReady = false;
+const schemaReady = {
+  games: false,
+  pastTests: false,
+};
 
 export async function ensureGamesSchema() {
-  if (schemaReady) {
+  if (schemaReady.games) {
     return;
   }
 
@@ -38,7 +41,34 @@ export async function ensureGamesSchema() {
     );
   `);
 
-  schemaReady = true;
+  schemaReady.games = true;
+}
+
+export async function ensurePastTestsSchema() {
+  if (schemaReady.pastTests) {
+    return;
+  }
+
+  const pool = getPool();
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS past_tests (
+      id BIGSERIAL PRIMARY KEY,
+      class_name TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      teacher TEXT NOT NULL,
+      test_number SMALLINT NOT NULL,
+      upload_year INTEGER NOT NULL,
+      file_name TEXT NOT NULL,
+      file_data BYTEA NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE INDEX IF NOT EXISTS past_tests_filter_idx
+      ON past_tests (class_name, subject, teacher, test_number, created_at DESC);
+  `);
+
+  schemaReady.pastTests = true;
 }
 
 export async function query<T extends Record<string, unknown>>(text: string, values: unknown[] = []) {

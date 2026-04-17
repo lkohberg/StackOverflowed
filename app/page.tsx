@@ -91,9 +91,10 @@ export default function Home() {
       </div>
 
       <div className="w-full px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
-        <p className="text-3xl font-extrabold italic leading-tight text-slate-700 sm:text-5xl md:text-6xl">
-          Geh ned in die HTL – alle, die schon dort sind!
+        <p className="text-2xl font-extrabold italic leading-tight text-slate-700 sm:text-4xl md:text-5xl">
+          Geh ned in die HTL
         </p>
+        <p className="mt-2 text-sm text-slate-500 sm:text-base">— alle, die schon dort sind!</p>
       </div>
 
       <footer className="mt-10 w-full bg-black px-4 py-10 text-zinc-100 sm:px-8 sm:py-12 lg:px-12">

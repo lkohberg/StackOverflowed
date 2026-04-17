@@ -49,7 +49,8 @@ export async function listPastTests(filters: {
 
   if (filters.schoolLevel) {
     values.push(filters.schoolLevel);
-    // Legacy rows used class_name values like "1ahitn"; fallback assumes the first character stores school level.
+    // Legacy rows used class_name values like "1ahitn"; fallback reads the first character as school level.
+    // Rows without a numeric prefix simply won't match valid level filters ("1".."5").
     conditions.push(`COALESCE(school_level, LEFT(class_name, 1)) = $${values.length}`);
   }
 

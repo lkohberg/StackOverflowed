@@ -186,7 +186,7 @@ export default function PastTestsPage() {
       const response = await fetch("/api/past-tests", { cache: "no-store" });
 
       if (!response.ok) {
-        setError("Das hierarchische Dropdown konnte nicht vollständig geladen werden.");
+        setError("Das hierarchische Dropdown konnte nicht vollständig geladen werden. Bitte Seite neu laden.");
         return;
       }
 
@@ -276,13 +276,13 @@ export default function PastTestsPage() {
     if (kind === "upload") {
       const uploadId = Number.parseInt(parts[0] ?? "", 10);
       if (Number.isNaN(uploadId)) {
-        setError("Der ausgewählte Upload ist ungültig.");
+        setError("Der ausgewählte Upload ist ungültig (fehlerhafte Upload-ID).");
         return;
       }
 
       const upload = allTests.find((test) => test.id === uploadId);
       if (!upload) {
-        setError("Der ausgewählte Upload wurde nicht gefunden.");
+        setError("Der ausgewählte Upload wurde nicht gefunden. Bitte Dropdown aktualisieren oder neu laden.");
         return;
       }
 
@@ -296,7 +296,7 @@ export default function PastTestsPage() {
       return;
     }
 
-    setError("Die Auswahl im hierarchischen Dropdown ist ungültig.");
+    setError(`Die Auswahl im hierarchischen Dropdown ist ungültig (Typ: ${kind}).`);
   };
 
   const onUploadClassChange = (event: ChangeEvent<HTMLSelectElement>) => {

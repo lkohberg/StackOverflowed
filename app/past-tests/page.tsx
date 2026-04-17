@@ -371,13 +371,13 @@ export default function PastTestsPage() {
 
           <form onSubmit={handleUpload} className="mt-4 grid gap-4">
             <div className="grid gap-3 md:grid-cols-3">
-              <label className="grid gap-1 text-sm text-slate-700">
+              <label className="grid min-w-0 gap-1 text-sm text-slate-700">
                 Absenderklasse
                 <select
                   value={uploadForm.className}
                   onChange={onUploadClassChange}
                   required
-                  className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
                 >
                   {AHITN_CLASS_OPTIONS.map((className) => (
                     <option key={className} value={className}>
@@ -387,13 +387,13 @@ export default function PastTestsPage() {
                 </select>
               </label>
 
-              <label className="grid gap-1 text-sm text-slate-700">
+              <label className="grid min-w-0 gap-1 text-sm text-slate-700">
                 Schulstufe des Tests
                 <select
                   value={uploadForm.schoolLevel}
                   onChange={onUploadSchoolLevelChange}
                   required
-                  className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
                 >
                   {SCHOOL_LEVEL_OPTIONS.map((schoolLevel) => (
                     <option key={schoolLevel} value={schoolLevel}>
@@ -403,13 +403,13 @@ export default function PastTestsPage() {
                 </select>
               </label>
 
-              <label className="grid gap-1 text-sm text-slate-700">
+              <label className="grid min-w-0 gap-1 text-sm text-slate-700">
                 Fach
                 <select
                   value={uploadForm.subject}
                   onChange={onUploadSubjectChange}
                   required
-                  className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
                 >
                   {uploadSubjectOptions.map((subject) => (
                     <option key={subject} value={subject}>
@@ -419,7 +419,7 @@ export default function PastTestsPage() {
                 </select>
               </label>
 
-              <label className="grid gap-1 text-sm text-slate-700">
+              <label className="grid min-w-0 gap-1 text-sm text-slate-700">
                 Lehrer
                 <select
                   value={uploadForm.teacher}
@@ -430,7 +430,7 @@ export default function PastTestsPage() {
                     }))
                   }
                   required
-                  className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
                 >
                   {uploadTeacherOptions.map((teacher) => (
                     <option key={teacher} value={teacher}>
@@ -442,7 +442,7 @@ export default function PastTestsPage() {
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
-              <label className="grid gap-1 text-sm text-slate-700">
+              <label className="grid min-w-0 gap-1 text-sm text-slate-700">
                 Testnummer
                 <select
                   value={uploadForm.testNumber}
@@ -453,7 +453,7 @@ export default function PastTestsPage() {
                     }))
                   }
                   required
-                  className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
                 >
                   {TEST_NUMBER_OPTIONS.map((number) => (
                     <option key={number} value={number}>
@@ -463,7 +463,7 @@ export default function PastTestsPage() {
                 </select>
               </label>
 
-              <label className="grid gap-1 text-sm text-slate-700">
+              <label className="grid min-w-0 gap-1 text-sm text-slate-700">
                 Upload-Jahr
                 <input
                   type="number"
@@ -477,12 +477,12 @@ export default function PastTestsPage() {
                     }))
                   }
                   required
-                  className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
                 />
               </label>
             </div>
 
-            <label className="grid gap-1 text-sm text-slate-700">
+            <label className="grid min-w-0 gap-1 text-sm text-slate-700">
               Stichwortartige Stoff-Beschreibung
               <textarea
                 value={uploadForm.topicSummary}
@@ -495,11 +495,11 @@ export default function PastTestsPage() {
                 required
                 rows={3}
                 placeholder="z. B. Netzwerktechnik, Routing, VLAN, Subnetting"
-                className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
               />
             </label>
 
-            <label className="grid gap-1 text-sm text-slate-700">
+            <label className="grid min-w-0 gap-1 text-sm text-slate-700">
               ZIP-Datei
               <input
                 id="past-test-file"
@@ -507,7 +507,7 @@ export default function PastTestsPage() {
                 accept=".zip,application/zip"
                 required
                 onChange={onUploadFileChange}
-                className="rounded-md border border-slate-300 px-3 py-2 text-slate-900 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-700"
+                className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-700"
               />
             </label>
 

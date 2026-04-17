@@ -79,6 +79,29 @@ export default function BrowserGamesPage() {
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <h2 className="text-xl font-semibold text-slate-900">Spieleverzeichnis</h2>
+
+        {loading ? <p className="mt-4 text-slate-600">Spiele werden geladen...</p> : null}
+
+        {!loading && games.length === 0 ? (
+          <p className="mt-4 text-slate-600">Noch keine Spiele eingereicht.</p>
+        ) : (
+          <ul className="mt-4 grid gap-3">
+            {games.map((game) => (
+              <li key={game.id} className="rounded-lg border border-slate-200 p-4 transition hover:border-slate-300 hover:shadow-sm">
+                <a href={game.url} target="_blank" rel="noreferrer" className="text-lg font-semibold text-slate-900 hover:underline">
+                  {game.title}
+                </a>
+                {game.description ? <p className="mt-1 text-slate-600">{game.description}</p> : null}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {error ? <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p> : null}
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <h2 className="text-xl font-semibold text-slate-900">Spiel einreichen</h2>
         <form onSubmit={handleSubmit} className="mt-4 grid gap-4">
           <input
@@ -111,28 +134,6 @@ export default function BrowserGamesPage() {
         </form>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <h2 className="text-xl font-semibold text-slate-900">Spieleverzeichnis</h2>
-
-        {loading ? <p className="mt-4 text-slate-600">Spiele werden geladen...</p> : null}
-
-        {!loading && games.length === 0 ? (
-          <p className="mt-4 text-slate-600">Noch keine Spiele eingereicht.</p>
-        ) : (
-          <ul className="mt-4 grid gap-3">
-            {games.map((game) => (
-              <li key={game.id} className="rounded-lg border border-slate-200 p-4 transition hover:border-slate-300 hover:shadow-sm">
-                <a href={game.url} target="_blank" rel="noreferrer" className="text-lg font-semibold text-slate-900 hover:underline">
-                  {game.title}
-                </a>
-                {game.description ? <p className="mt-1 text-slate-600">{game.description}</p> : null}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {error ? <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p> : null}
-      </section>
     </div>
     </div>
   );

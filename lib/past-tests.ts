@@ -2,6 +2,7 @@ import { ensurePastTestsSchema, query } from "@/lib/db";
 
 export type PastTest = {
   id: number;
+  school_level: string;
   class_name: string;
   subject: string;
   teacher: string;
@@ -36,7 +37,7 @@ function toBuffer(data: unknown) {
 }
 
 export async function listPastTests(filters: {
-  className?: string;
+  schoolLevel?: string;
   subject?: string;
   teacher?: string;
   testNumber?: number;
@@ -46,9 +47,9 @@ export async function listPastTests(filters: {
   const conditions: string[] = [];
   const values: Array<string | number> = [];
 
-  if (filters.className) {
-    values.push(filters.className);
-    conditions.push(`class_name = $${values.length}`);
+  if (filters.schoolLevel) {
+    values.push(filters.schoolLevel);
+    conditions.push(`COALESCE(school_level, LEFT(class_name, 1)) = $${values.length}`);
   }
 
   if (filters.subject) {
@@ -69,7 +70,15 @@ export async function listPastTests(filters: {
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
   const result = await query<PastTest>(
-    `SELECT id, class_name, subject, teacher, test_number, upload_year, file_name, created_at
+    `SELECT id,
+            COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
+            class_name,
+            subject,
+            teacher,
+            test_number,
+            upload_year,
+            file_name,
+            created_at
      FROM past_tests
      ${whereClause}
      ORDER BY created_at DESC;`,
@@ -80,6 +89,7 @@ export async function listPastTests(filters: {
 }
 
 export async function createPastTest(input: {
+  schoolLevel: string;
   className: string;
   subject: string;
   teacher: string;
@@ -91,11 +101,20 @@ export async function createPastTest(input: {
   await ensurePastTestsSchema();
 
   const result = await query<PastTest>(
-    `INSERT INTO past_tests (class_name, subject, teacher, test_number, upload_year, file_name, file_data)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
-     RETURNING id, class_name, subject, teacher, test_number, upload_year, file_name, created_at;`,
+    `INSERT INTO past_tests (class_name, school_level, subject, teacher, test_number, upload_year, file_name, file_data)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+     RETURNING id,
+               COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
+               class_name,
+               subject,
+               teacher,
+               test_number,
+               upload_year,
+               file_name,
+               created_at;`,
     [
       input.className,
+      input.schoolLevel,
       input.subject,
       input.teacher,
       input.testNumber,
@@ -112,7 +131,16 @@ export async function getPastTestFile(id: number) {
   await ensurePastTestsSchema();
 
   const result = await query<PastTestWithData>(
-    `SELECT id, class_name, subject, teacher, test_number, upload_year, file_name, file_data, created_at
+    `SELECT id,
+            COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
+            class_name,
+            subject,
+            teacher,
+            test_number,
+            upload_year,
+            file_name,
+            file_data,
+            created_at
      FROM past_tests
      WHERE id = $1
      LIMIT 1;`,
@@ -133,6 +161,7 @@ export async function getPastTestFile(id: number) {
 
   return {
     id: row.id,
+    school_level: row.school_level,
     class_name: row.class_name,
     subject: row.subject,
     teacher: row.teacher,

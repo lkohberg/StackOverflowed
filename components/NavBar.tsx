@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -17,8 +18,12 @@ export function NavBar() {
   return (
     <header className="border-b border-slate-100 bg-white">
       <div className="flex w-full flex-col items-start gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-4 lg:px-12">
-        <Link href="/" className="text-xs font-semibold tracking-widest uppercase text-slate-800 transition-colors hover:text-slate-500 sm:text-sm">
-          StackOverflowed
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-slate-800 transition-colors hover:text-slate-500 sm:text-sm"
+        >
+          <span>StackOverflowed</span>
+          <Image src="/favicon.ico" alt="StackOverflowed Logo" width={16} height={16} priority />
         </Link>
         <nav className="flex w-full items-center gap-1 overflow-x-auto sm:w-auto sm:gap-2">
           {navItems.map((item) => {

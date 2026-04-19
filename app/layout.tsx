@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { NavBar } from "@/components/NavBar";
+import faviconImage from "@/images/favicon.png";
 
 export const metadata: Metadata = {
   title: "StackOverflowed",
   description: "Ein Hub für IT-Schülerinnen und IT-Schüler der HTL Steyr",
   icons: {
-    icon: "/favicon.ico",
+    icon: faviconImage.src,
   },
 };
 

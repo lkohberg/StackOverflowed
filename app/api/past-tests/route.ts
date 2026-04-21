@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { createPastTest, getPastTestFile, listPastTests } from "@/lib/past-tests";
 import {
+  isValidDepartment,
   isValidSchoolLevel,
   isValidSubjectForSchoolLevel,
   isValidTeacherForSchoolLevelSubject,
   isValidTestNumber,
+  toClassNameFromSchoolLevelDepartment,
 } from "@/lib/past-tests-catalog";
 
 const ALLOWED_ZIP_TYPES = new Set([
@@ -21,10 +23,6 @@ function normalizeText(value: FormDataEntryValue | null) {
 function parseInteger(value: string) {
   const parsed = Number.parseInt(value, 10);
   return Number.isNaN(parsed) ? null : parsed;
-}
-
-function toClassNameFromSchoolLevel(schoolLevel: string) {
-  return `${schoolLevel}ahitn`;
 }
 
 function isZipFile(file: File) {
@@ -74,6 +72,7 @@ export async function GET(request: Request) {
   }
 
   const schoolLevel = (searchParams.get("schoolLevel") ?? "").trim();
+  const department = (searchParams.get("department") ?? "").trim();
   const subject = (searchParams.get("subject") ?? "").trim();
   const teacher = (searchParams.get("teacher") ?? "").trim();
   const testNumberValue = (searchParams.get("testNumber") ?? "").trim();
@@ -82,6 +81,10 @@ export async function GET(request: Request) {
 
   if (schoolLevel && !isValidSchoolLevel(schoolLevel)) {
     return NextResponse.json({ error: "Ungültige Schulstufe." }, { status: 400 });
+  }
+
+  if (department && !isValidDepartment(department)) {
+    return NextResponse.json({ error: "Ungültige Abteilung." }, { status: 400 });
   }
 
   if (subject && !schoolLevel) {
@@ -108,6 +111,7 @@ export async function GET(request: Request) {
 
   try {
     const tests = await listPastTests({
+      department: department || undefined,
       schoolLevel: schoolLevel || undefined,
       subject: subject || undefined,
       teacher: teacher || undefined,
@@ -126,6 +130,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
 
     const schoolLevel = normalizeText(formData.get("schoolLevel"));
+    const department = normalizeText(formData.get("department"));
     const subject = normalizeText(formData.get("subject"));
     const teacher = normalizeText(formData.get("teacher"));
     const testNumberValue = normalizeText(formData.get("testNumber"));
@@ -139,6 +144,10 @@ export async function POST(request: Request) {
 
     if (!isValidSchoolLevel(schoolLevel)) {
       return NextResponse.json({ error: "Bitte eine gültige Schulstufe auswählen." }, { status: 400 });
+    }
+
+    if (!isValidDepartment(department)) {
+      return NextResponse.json({ error: "Bitte eine gültige Abteilung auswählen." }, { status: 400 });
     }
 
     if (!isValidSubjectForSchoolLevel(schoolLevel, subject)) {
@@ -176,7 +185,8 @@ export async function POST(request: Request) {
 
     const savedTest = await createPastTest({
       schoolLevel,
-      className: toClassNameFromSchoolLevel(schoolLevel),
+      department,
+      className: toClassNameFromSchoolLevelDepartment(schoolLevel, department),
       subject,
       teacher,
       testNumber,

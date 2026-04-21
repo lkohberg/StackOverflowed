@@ -2,6 +2,8 @@
 
 import { ChangeEvent, FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
+  DEPARTMENT_LABELS,
+  DEPARTMENT_OPTIONS,
   SCHOOL_LEVEL_OPTIONS,
   TEST_NUMBER_OPTIONS,
   getSubjectsForSchoolLevel,
@@ -10,6 +12,7 @@ import {
 
 type PastTest = {
   id: number;
+  department: string;
   school_level: string;
   class_name: string;
   subject: string;
@@ -22,11 +25,21 @@ type PastTest = {
 };
 
 const currentYear = new Date().getFullYear();
+const defaultDepartment = DEPARTMENT_OPTIONS[0];
 const defaultSchoolLevel = SCHOOL_LEVEL_OPTIONS[0];
 const defaultSubject = getSubjectsForSchoolLevel(defaultSchoolLevel)[0] ?? "";
 const defaultTeacher = getTeachersForSubject(defaultSchoolLevel, defaultSubject)[0] ?? "";
 
+function toDepartmentLabel(department: string) {
+  if (department in DEPARTMENT_LABELS) {
+    return DEPARTMENT_LABELS[department as keyof typeof DEPARTMENT_LABELS];
+  }
+
+  return "Unbekannt";
+}
+
 type UploadFormState = {
+  department: string;
   schoolLevel: string;
   subject: string;
   teacher: string;
@@ -37,6 +50,7 @@ type UploadFormState = {
 };
 
 type FilterState = {
+  department: string;
   schoolLevel: string;
   subject: string;
   teacher: string;
@@ -45,6 +59,10 @@ type FilterState = {
 
 function toFilterQuery(filters: FilterState) {
   const params = new URLSearchParams();
+
+  if (filters.department) {
+    params.set("department", filters.department);
+  }
 
   if (filters.schoolLevel) {
     params.set("schoolLevel", filters.schoolLevel);
@@ -71,12 +89,14 @@ export default function PastTestsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
+    department: "",
     schoolLevel: "",
     subject: "",
     teacher: "",
     testNumber: "",
   });
   const [uploadForm, setUploadForm] = useState<UploadFormState>({
+    department: defaultDepartment,
     schoolLevel: defaultSchoolLevel,
     subject: defaultSubject,
     teacher: defaultTeacher,
@@ -219,6 +239,7 @@ export default function PastTestsPage() {
     }
 
     const payload = new FormData();
+    payload.set("department", uploadForm.department);
     payload.set("schoolLevel", uploadForm.schoolLevel);
     payload.set("subject", uploadForm.subject);
     payload.set("teacher", uploadForm.teacher);
@@ -274,7 +295,22 @@ export default function PastTestsPage() {
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <h2 className="text-xl font-semibold text-slate-900">Tests durchsuchen</h2>
           <div className="mt-4 grid gap-3">
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-5">
+            <select
+              value={filters.department}
+              onChange={(event) => {
+                setFilters((current) => ({ ...current, department: event.target.value }));
+              }}
+              className="rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+            >
+              <option value="">Alle Abteilungen</option>
+              {DEPARTMENT_OPTIONS.map((department) => (
+                <option key={department} value={department}>
+                  {toDepartmentLabel(department)}
+                </option>
+              ))}
+            </select>
+
             <select
               value={filters.schoolLevel}
               onChange={onFilterSchoolLevelChange}
@@ -344,7 +380,8 @@ export default function PastTestsPage() {
               {tests.map((test) => (
                 <li key={test.id} className="rounded-lg border border-slate-200 p-4">
                   <p className="text-sm font-semibold text-slate-900">
-                    {test.school_level}. Schulstufe · {test.subject} · {test.teacher} · {test.test_number}. Test
+                    {toDepartmentLabel(test.department)} · {test.school_level}. Schulstufe ·{" "}
+                    {test.subject} · {test.teacher} · {test.test_number}. Test
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
                     Jahr des testes: {test.upload_year} · Datei: {test.file_name}
@@ -368,7 +405,28 @@ export default function PastTestsPage() {
           <h2 className="text-xl font-semibold text-slate-900">Test hochladen</h2>
 
           <form onSubmit={handleUpload} className="mt-4 grid gap-4">
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-4">
+              <label className="grid min-w-0 gap-1 text-sm text-slate-700">
+                Abteilung
+                <select
+                  value={uploadForm.department}
+                  onChange={(event) =>
+                    setUploadForm((current) => ({
+                      ...current,
+                      department: event.target.value,
+                    }))
+                  }
+                  required
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
+                >
+                  {DEPARTMENT_OPTIONS.map((department) => (
+                    <option key={department} value={department}>
+                      {toDepartmentLabel(department)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
               <label className="grid min-w-0 gap-1 text-sm text-slate-700">
                 Schulstufe des Tests
                 <select

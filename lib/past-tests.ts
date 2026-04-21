@@ -3,6 +3,7 @@ import { ensurePastTestsSchema, query } from "@/lib/db";
 export type PastTest = {
   id: number;
   school_level: string;
+  department: string;
   class_name: string;
   subject: string;
   teacher: string;
@@ -16,6 +17,18 @@ export type PastTest = {
 type PastTestWithData = PastTest & {
   file_data: unknown;
 };
+
+const DEPARTMENT_SQL_EXPRESSION = `COALESCE(
+  NULLIF(BTRIM(department), ''),
+  CASE
+    WHEN class_name ~* 'ahitn$' THEN 'informatik'
+    WHEN class_name ~* 'ahmb$' THEN 'maschinenbau'
+    WHEN class_name ~* 'ahel$' THEN 'elektronik'
+    WHEN class_name ~* 'ahme$' THEN 'mechatronik'
+    WHEN class_name ~* 'ahad$' THEN 'art-design'
+    ELSE 'informatik'
+  END
+)`;
 
 function toBuffer(data: unknown) {
   if (Buffer.isBuffer(data)) {
@@ -38,6 +51,7 @@ function toBuffer(data: unknown) {
 }
 
 export async function listPastTests(filters: {
+  department?: string;
   schoolLevel?: string;
   subject?: string;
   teacher?: string;
@@ -47,6 +61,10 @@ export async function listPastTests(filters: {
 
   const conditions: string[] = [];
   const values: Array<string | number> = [];
+  if (filters.department) {
+    values.push(filters.department);
+    conditions.push(`${DEPARTMENT_SQL_EXPRESSION} = $${values.length}`);
+  }
 
   if (filters.schoolLevel) {
     values.push(filters.schoolLevel);
@@ -75,6 +93,7 @@ export async function listPastTests(filters: {
   const result = await query<PastTest>(
     `SELECT id,
             COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
+            ${DEPARTMENT_SQL_EXPRESSION} AS department,
             class_name,
             subject,
             teacher,
@@ -85,7 +104,7 @@ export async function listPastTests(filters: {
             created_at
      FROM past_tests
      ${whereClause}
-     ORDER BY created_at DESC;`,
+      ORDER BY created_at DESC;`,
     values,
   );
 
@@ -94,6 +113,7 @@ export async function listPastTests(filters: {
 
 export async function createPastTest(input: {
   schoolLevel: string;
+  department: string;
   className: string;
   subject: string;
   teacher: string;
@@ -106,10 +126,11 @@ export async function createPastTest(input: {
   await ensurePastTestsSchema();
 
   const result = await query<PastTest>(
-    `INSERT INTO past_tests (class_name, school_level, subject, teacher, test_number, upload_year, topic_summary, file_name, file_data)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `INSERT INTO past_tests (class_name, school_level, department, subject, teacher, test_number, upload_year, topic_summary, file_name, file_data)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
      RETURNING id,
                COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
+               ${DEPARTMENT_SQL_EXPRESSION} AS department,
                class_name,
                subject,
                teacher,
@@ -121,6 +142,7 @@ export async function createPastTest(input: {
     [
       input.className,
       input.schoolLevel,
+      input.department,
       input.subject,
       input.teacher,
       input.testNumber,
@@ -140,6 +162,7 @@ export async function getPastTestFile(id: number) {
   const result = await query<PastTestWithData>(
     `SELECT id,
             COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
+            ${DEPARTMENT_SQL_EXPRESSION} AS department,
             class_name,
             subject,
             teacher,
@@ -170,6 +193,7 @@ export async function getPastTestFile(id: number) {
   return {
     id: row.id,
     school_level: row.school_level,
+    department: row.department,
     class_name: row.class_name,
     subject: row.subject,
     teacher: row.teacher,

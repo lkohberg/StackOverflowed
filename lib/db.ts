@@ -94,6 +94,21 @@ export async function ensurePastTestsSchema() {
     ALTER TABLE past_tests
       ADD COLUMN IF NOT EXISTS school_level TEXT;
 
+    -- Migration for existing databases created before department was introduced.
+    ALTER TABLE past_tests
+      ADD COLUMN IF NOT EXISTS department TEXT;
+
+    UPDATE past_tests
+      SET department = CASE
+        WHEN class_name ~* 'ahitn$' THEN 'informatik'
+        WHEN class_name ~* 'ahmb$' THEN 'maschinenbau'
+        WHEN class_name ~* 'ahel$' THEN 'elektronik'
+        WHEN class_name ~* 'ahme$' THEN 'mechatronik'
+        WHEN class_name ~* 'ahad$' THEN 'art-design'
+        ELSE 'informatik'
+      END
+      WHERE department IS NULL OR BTRIM(department) = '';
+
     -- Keep this for existing databases created before topic_summary was introduced.
     ALTER TABLE past_tests
       ADD COLUMN IF NOT EXISTS topic_summary TEXT;
@@ -110,6 +125,9 @@ export async function ensurePastTestsSchema() {
 
     CREATE INDEX IF NOT EXISTS past_tests_school_level_filter_idx
       ON past_tests (school_level, subject, teacher, test_number, created_at DESC);
+
+    CREATE INDEX IF NOT EXISTS past_tests_department_filter_idx
+      ON past_tests (department, school_level, subject, teacher, test_number, created_at DESC);
   `);
 
   schemaReady.pastTests = true;

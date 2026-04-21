@@ -47,11 +47,26 @@ const thirdYearSubjects: SubjectTeachers[] = [
   { subject: "ITP2", teachers: ["SAMC"] },
 ];
 
+const fourthYearSubjects: SubjectTeachers[] = [
+  { subject: "SEW", teachers: ["RATP", "PRAG"] },
+  { subject: "Physik", teachers: ["HORF"] },
+  { subject: "Chemie", teachers: ["CATD"] },
+  { subject: "Geschichte", teachers: ["CATD"] },
+  { subject: "ITSI", teachers: ["ROMO"] },
+  { subject: "NWT", teachers: ["REWO", "ROMO", "RATP"] },
+  { subject: "AM", teachers: ["HOTA", "SCAN"] },
+  { subject: "MEDT", teachers: ["SAMC"] },
+  { subject: "ITP2", teachers: ["SAMC"] },
+  { subject: "Biologie", teachers: ["LINA"] },
+  { subject: "WIR", teachers: ["HILS"] },
+  { subject: "INSY", teachers: ["RATP", "SCHH"] },
+];
+
 export const PAST_TESTS_CATALOG: Record<SchoolLevel, SubjectTeachers[]> = {
   "1": firstYearSubjects,
   "2": secondYearSubjects,
   "3": thirdYearSubjects,
-  "4": thirdYearSubjects,
+  "4": fourthYearSubjects,
   "5": thirdYearSubjects,
 };
 

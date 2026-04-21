@@ -1,70 +1,101 @@
 # StackOverflowed
 
-A modern student hub for IT students at HTL Steyr.
+StackOverflowed is a student-built web hub for HTL Steyr IT classes.
+It combines useful school resources in one place so students can quickly find and share what they need.
+
+## Why this project exists
+
+The motivation is simple: reduce friction in daily school life.
+Instead of resources being scattered across chats, cloud folders, and personal bookmarks, StackOverflowed provides one central place for:
+
+- **Past tests** (including uploads and ZIP downloads)
+- **Helpful links**
+- **Browser games** for breaks
+- **School forms** as downloadable PDFs
+
+## What it does
+
+The app provides a small, focused set of pages:
+
+- `/past-tests` – filter and browse old tests, upload new ones
+- `/links` – list and submit useful links
+- `/browser-games` – list and submit browser games
+- `/formulare` – browse and download PDF forms from the repository
+
+The UI text is mostly in German because the target users are local students.
+
+## How it works (high level)
+
+StackOverflowed is a Next.js app with:
+
+- **App Router pages** for the frontend (`app/*/page.tsx`)
+- **Route handlers** for APIs (`app/api/*/route.ts`)
+- **PostgreSQL (Neon)** for dynamic data (`games`, `links`, `past_tests`)
+
+Data flow is straightforward:
+1. Pages fetch data from internal API endpoints.
+2. API endpoints validate input and call data-access functions in `lib/*`.
+3. `lib/db.ts` connects to Neon and ensures required tables/indexes exist.
+4. Responses return JSON (or file bytes for downloads).
+
+## Technical notes
+
+- `games` and `links` enforce unique URLs.
+- `past_tests` stores ZIP files directly in PostgreSQL (`BYTEA`) plus metadata for filtering.
+- School forms are static PDFs from the `formulare/` directory, served through `/api/formulare` with filename/path validation.
+
+## Local development
+
+### Requirements
+
+- Node.js 20+
+- A PostgreSQL connection string (Neon works out of the box)
+
+### Environment variables
+
+Set one of:
+
+- `DATABASE_URL` (preferred)
+- `POSTGRES_URL` (legacy fallback)
+
+### Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Then open `http://localhost:3000`.
+
+## Validation
+
+```bash
+npm run lint
+npm run build
+```
 
 ## Project structure
 
 ```text
-StackOverflowed/
-├── app/
-│   ├── api/games/route.ts          # GET/POST API for browser games
-│   ├── api/links/route.ts          # GET/POST API for useful links
-│   ├── api/past-tests/route.ts     # GET/POST API for past tests + downloads
-│   ├── browser-games/page.tsx      # Browser games directory + submit form
-│   ├── links/page.tsx              # Links directory + submit form
-│   ├── past-tests/page.tsx         # Past tests page (filters + upload)
-│   ├── globals.css                 # Global Tailwind styles
-│   ├── layout.tsx                  # Root layout + navigation
-│   └── page.tsx                    # Homepage
-├── components/
-│   └── NavBar.tsx                  # Main navigation component
-├── lib/
-│   ├── db.ts                       # Vercel DB (Postgres) connection and schema setup
-│   ├── games.ts                    # Games data access functions
-│   ├── links.ts                    # Links data access functions
-│   └── past-tests.ts               # Past tests data access functions
-├── package.json
-└── README.md
+app/
+  api/
+    games/route.ts
+    links/route.ts
+    past-tests/route.ts
+    formulare/route.ts
+  browser-games/page.tsx
+  links/page.tsx
+  past-tests/page.tsx
+  formulare/page.tsx
+components/
+  NavBar.tsx
+lib/
+  db.ts
+  games.ts
+  links.ts
+  past-tests.ts
+  past-tests-catalog.ts
+formulare/
+  *.pdf
 ```
-
-## Database schema
-
-```sql
-CREATE TABLE games (
-  id BIGSERIAL PRIMARY KEY,
-  title TEXT NOT NULL,
-  url TEXT NOT NULL UNIQUE,
-  description TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE links (
-  id BIGSERIAL PRIMARY KEY,
-  title TEXT NOT NULL,
-  url TEXT NOT NULL UNIQUE,
-  description TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE past_tests (
-  id BIGSERIAL PRIMARY KEY,
-  class_name TEXT NOT NULL,
-  school_level TEXT,
-  subject TEXT NOT NULL,
-  teacher TEXT NOT NULL,
-  test_number SMALLINT NOT NULL,
-  upload_year INTEGER NOT NULL,
-  topic_summary TEXT NOT NULL DEFAULT 'Keine Beschreibung',
-  file_name TEXT NOT NULL,
-  file_data BYTEA NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX past_tests_filter_idx
-  ON past_tests (class_name, subject, teacher, test_number, created_at DESC);
-
-CREATE INDEX past_tests_school_level_filter_idx
-  ON past_tests (school_level, subject, teacher, test_number, created_at DESC);
-```
-
 

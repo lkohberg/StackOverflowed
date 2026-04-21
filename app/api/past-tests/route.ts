@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createPastTest, getPastTestFile, listPastTests } from "@/lib/past-tests";
 import {
-  isValidAhitnClassName,
   isValidSchoolLevel,
   isValidSubjectForSchoolLevel,
   isValidTeacherForSchoolLevelSubject,
@@ -22,6 +21,10 @@ function normalizeText(value: FormDataEntryValue | null) {
 function parseInteger(value: string) {
   const parsed = Number.parseInt(value, 10);
   return Number.isNaN(parsed) ? null : parsed;
+}
+
+function toClassNameFromSchoolLevel(schoolLevel: string) {
+  return `${schoolLevel}ahitn`;
 }
 
 function isZipFile(file: File) {
@@ -122,7 +125,6 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
 
-    const className = normalizeText(formData.get("className"));
     const schoolLevel = normalizeText(formData.get("schoolLevel"));
     const subject = normalizeText(formData.get("subject"));
     const teacher = normalizeText(formData.get("teacher"));
@@ -134,10 +136,6 @@ export async function POST(request: Request) {
     const testNumber = parseInteger(testNumberValue);
     const uploadYear = parseInteger(uploadYearValue);
     const currentYear = new Date().getFullYear();
-
-    if (!isValidAhitnClassName(className)) {
-      return NextResponse.json({ error: "Bitte eine gültige Absenderklasse auswählen." }, { status: 400 });
-    }
 
     if (!isValidSchoolLevel(schoolLevel)) {
       return NextResponse.json({ error: "Bitte eine gültige Schulstufe auswählen." }, { status: 400 });
@@ -178,7 +176,7 @@ export async function POST(request: Request) {
 
     const savedTest = await createPastTest({
       schoolLevel,
-      className,
+      className: toClassNameFromSchoolLevel(schoolLevel),
       subject,
       teacher,
       testNumber,

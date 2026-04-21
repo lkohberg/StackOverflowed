@@ -2,7 +2,6 @@
 
 import { ChangeEvent, FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
-  AHITN_CLASS_OPTIONS,
   SCHOOL_LEVEL_OPTIONS,
   TEST_NUMBER_OPTIONS,
   getSubjectsForSchoolLevel,
@@ -24,13 +23,11 @@ type PastTest = {
 
 const currentYear = new Date().getFullYear();
 const defaultSchoolLevel = SCHOOL_LEVEL_OPTIONS[0];
-const defaultUploaderClass = AHITN_CLASS_OPTIONS[0];
 const defaultSubject = getSubjectsForSchoolLevel(defaultSchoolLevel)[0] ?? "";
 const defaultTeacher = getTeachersForSubject(defaultSchoolLevel, defaultSubject)[0] ?? "";
 
 type UploadFormState = {
   schoolLevel: string;
-  className: string;
   subject: string;
   teacher: string;
   testNumber: string;
@@ -81,7 +78,6 @@ export default function PastTestsPage() {
   });
   const [uploadForm, setUploadForm] = useState<UploadFormState>({
     schoolLevel: defaultSchoolLevel,
-    className: defaultUploaderClass,
     subject: defaultSubject,
     teacher: defaultTeacher,
     testNumber: String(TEST_NUMBER_OPTIONS[0]),
@@ -177,15 +173,6 @@ export default function PastTestsPage() {
     }));
   };
 
-  const onUploadClassChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const className = event.target.value;
-
-    setUploadForm((current) => ({
-      ...current,
-      className,
-    }));
-  };
-
   const onUploadSchoolLevelChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const schoolLevel = event.target.value;
     const subjects = getSubjectsForSchoolLevel(schoolLevel);
@@ -233,7 +220,6 @@ export default function PastTestsPage() {
 
     const payload = new FormData();
     payload.set("schoolLevel", uploadForm.schoolLevel);
-    payload.set("className", uploadForm.className);
     payload.set("subject", uploadForm.subject);
     payload.set("teacher", uploadForm.teacher);
     payload.set("testNumber", uploadForm.testNumber);
@@ -361,7 +347,7 @@ export default function PastTestsPage() {
                     {test.school_level}. Schulstufe · {test.subject} · {test.teacher} · {test.test_number}. Test
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
-                    Absenderklasse: {test.class_name} · Upload-Jahr: {test.upload_year} · Datei: {test.file_name}
+                    Jahr des testes: {test.upload_year} · Datei: {test.file_name}
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
                     Stoff: {test.topic_summary?.trim() || "Keine Beschreibung"}
@@ -383,22 +369,6 @@ export default function PastTestsPage() {
 
           <form onSubmit={handleUpload} className="mt-4 grid gap-4">
             <div className="grid gap-3 md:grid-cols-3">
-              <label className="grid min-w-0 gap-1 text-sm text-slate-700">
-                Absenderklasse
-                <select
-                  value={uploadForm.className}
-                  onChange={onUploadClassChange}
-                  required
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
-                >
-                  {AHITN_CLASS_OPTIONS.map((className) => (
-                    <option key={className} value={className}>
-                      {className}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
               <label className="grid min-w-0 gap-1 text-sm text-slate-700">
                 Schulstufe des Tests
                 <select
@@ -476,7 +446,7 @@ export default function PastTestsPage() {
               </label>
 
               <label className="grid min-w-0 gap-1 text-sm text-slate-700">
-                Upload-Jahr
+                Jahr des testes
                 <input
                   type="number"
                   min={2000}

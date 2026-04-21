@@ -146,11 +146,18 @@ export default function PastTestsPage() {
   const onFilterSchoolLevelChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const schoolLevel = event.target.value;
 
-    setFilters({
-      schoolLevel,
-      subject: "",
-      teacher: "",
-      testNumber: "",
+    setFilters((current) => {
+      const subjectOptions = schoolLevel ? getSubjectsForSchoolLevel(schoolLevel) : [];
+      const subject = current.subject && subjectOptions.includes(current.subject) ? current.subject : "";
+      const teacherOptions = subject ? getTeachersForSubject(schoolLevel, subject) : [];
+      const teacher = current.teacher && teacherOptions.includes(current.teacher) ? current.teacher : "";
+
+      return {
+        ...current,
+        schoolLevel,
+        subject,
+        teacher,
+      };
     });
   };
 
@@ -160,8 +167,13 @@ export default function PastTestsPage() {
     setFilters((current) => ({
       ...current,
       subject,
-      teacher: "",
-      testNumber: "",
+      teacher:
+        current.teacher &&
+        current.schoolLevel &&
+        subject &&
+        getTeachersForSubject(current.schoolLevel, subject).includes(current.teacher)
+          ? current.teacher
+          : "",
     }));
   };
 

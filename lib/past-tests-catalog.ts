@@ -1,10 +1,24 @@
-export const AHITN_CLASS_OPTIONS = ["1ahitn", "2ahitn", "3ahitn", "4ahitn", "5ahitn"] as const;
 export const SCHOOL_LEVEL_OPTIONS = ["1", "2", "3", "4", "5"] as const;
+export const DEPARTMENT_OPTIONS = [
+  "informatik",
+  "maschinenbau",
+  "elektronik",
+  "mechatronik",
+  "art-design",
+] as const;
 
 export const TEST_NUMBER_OPTIONS = [1, 2, 3, 4] as const;
 
-export type AhitnClassName = (typeof AHITN_CLASS_OPTIONS)[number];
 export type SchoolLevel = (typeof SCHOOL_LEVEL_OPTIONS)[number];
+export type Department = (typeof DEPARTMENT_OPTIONS)[number];
+
+const DEPARTMENT_TO_CLASS_SUFFIX: Record<Department, string> = {
+  informatik: "ahitn",
+  maschinenbau: "ahmb",
+  elektronik: "ahel",
+  mechatronik: "ahme",
+  "art-design": "ahad",
+};
 
 export type SubjectTeachers = {
   subject: string;
@@ -71,12 +85,20 @@ export const PAST_TESTS_CATALOG: Record<SchoolLevel, SubjectTeachers[]> = {
   "5": thirdYearSubjects,
 };
 
-export function isValidAhitnClassName(value: string): value is AhitnClassName {
-  return AHITN_CLASS_OPTIONS.includes(value as AhitnClassName);
-}
-
 export function isValidSchoolLevel(value: string): value is SchoolLevel {
   return SCHOOL_LEVEL_OPTIONS.includes(value as SchoolLevel);
+}
+
+export function isValidDepartment(value: string): value is Department {
+  return DEPARTMENT_OPTIONS.includes(value as Department);
+}
+
+export function toClassNameFromSchoolLevelDepartment(schoolLevel: string, department: string) {
+  if (!isValidSchoolLevel(schoolLevel) || !isValidDepartment(department)) {
+    return "";
+  }
+
+  return `${schoolLevel}${DEPARTMENT_TO_CLASS_SUFFIX[department]}`;
 }
 
 export function getSubjectsForSchoolLevel(schoolLevel: string) {

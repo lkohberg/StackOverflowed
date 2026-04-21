@@ -71,49 +71,4 @@ CREATE INDEX past_tests_school_level_filter_idx
   ON past_tests (school_level, subject, teacher, test_number, created_at DESC);
 ```
 
-### Notes
 
-- Tables are created automatically on first API usage.
-- `past_tests.topic_summary` is normalized to `NOT NULL DEFAULT 'Keine Beschreibung'`.
-- For legacy rows without `school_level`, reads fall back to `LEFT(class_name, 1)`.
-
-## API
-
-- `GET /api/games` → returns all games ordered by newest first
-- `POST /api/games` → creates a game (validates required fields, URL format, and duplicate URL)
-- `GET /api/links` → returns all links ordered by newest first
-- `POST /api/links` → creates a link (validates required fields, URL format, and duplicate URL)
-- `GET /api/past-tests` → returns tests with optional filters (`schoolLevel`, `subject`, `teacher`, `testNumber`)
-- `GET /api/past-tests?downloadId=<id>` → downloads stored ZIP for a test
-- `POST /api/past-tests` → uploads a past test ZIP with validated metadata
-
-## Run locally
-
-1. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-2. Set environment variables in `.env.local`:
-
-   ```bash
-   DATABASE_URL=postgres://USER:PASSWORD@HOST:PORT/DBNAME
-   # or:
-   POSTGRES_URL=postgres://USER:PASSWORD@HOST:PORT/DBNAME
-   ```
-
-3. Start development server:
-
-   ```bash
-   npm run dev
-   ```
-
-4. Open `http://localhost:3000`.
-
-## Deploy to Vercel
-
-1. Push the repository to GitHub.
-2. Import the project in Vercel.
-3. Add `DATABASE_URL` (or `POSTGRES_URL`) in Vercel project environment variables.
-4. Deploy.

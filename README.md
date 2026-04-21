@@ -2,10 +2,6 @@
 
 A modern student hub for IT students at HTL Steyr.
 
-## Why Vercel DB (Postgres) (instead of Vercel KV)
-
-This project uses **Vercel DB (Postgres)** because it is a strong fit for structured records (`id`, `title`, `url`, `description`, `created_at`), supports uniqueness constraints for duplicate URL prevention, and is production-ready on Vercel.
-
 ## Project structure
 
 ```text

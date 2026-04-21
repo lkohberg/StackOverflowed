@@ -41,6 +41,7 @@ const thirdYearSubjects: SubjectTeachers[] = [
   { subject: "Chemie", teachers: ["CATD"] },
   { subject: "Geschichte", teachers: ["CATD"] },
   { subject: "ITSI", teachers: ["ROMO"] },
+  { subject: "INSY", teachers: ["RATP", "SCHH"] },
   { subject: "NWT", teachers: ["PUSC", "REWO"] },
   { subject: "AM", teachers: ["HOTA", "SCAN"] },
   { subject: "MEDT", teachers: ["SAMC"] },

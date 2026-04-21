@@ -94,7 +94,7 @@ export async function ensurePastTestsSchema() {
     ALTER TABLE past_tests
       ADD COLUMN IF NOT EXISTS school_level TEXT;
 
-    -- Keep this for existing databases created before department was introduced.
+    -- Migration for existing databases created before department was introduced.
     ALTER TABLE past_tests
       ADD COLUMN IF NOT EXISTS department TEXT;
 

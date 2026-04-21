@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
+  DEPARTMENT_LABELS,
   DEPARTMENT_OPTIONS,
   SCHOOL_LEVEL_OPTIONS,
   TEST_NUMBER_OPTIONS,
@@ -28,13 +29,14 @@ const defaultDepartment = DEPARTMENT_OPTIONS[0];
 const defaultSchoolLevel = SCHOOL_LEVEL_OPTIONS[0];
 const defaultSubject = getSubjectsForSchoolLevel(defaultSchoolLevel)[0] ?? "";
 const defaultTeacher = getTeachersForSubject(defaultSchoolLevel, defaultSubject)[0] ?? "";
-const DEPARTMENT_LABELS: Record<string, string> = {
-  informatik: "Informatik",
-  maschinenbau: "Maschinenbau",
-  elektronik: "Elektronik",
-  mechatronik: "Mechatronik",
-  "art-design": "Art & Design",
-};
+
+function toDepartmentLabel(department: string) {
+  if (department in DEPARTMENT_LABELS) {
+    return DEPARTMENT_LABELS[department as keyof typeof DEPARTMENT_LABELS];
+  }
+
+  return "Unbekannt";
+}
 
 type UploadFormState = {
   department: string;
@@ -304,7 +306,7 @@ export default function PastTestsPage() {
               <option value="">Alle Abteilungen</option>
               {DEPARTMENT_OPTIONS.map((department) => (
                 <option key={department} value={department}>
-                  {DEPARTMENT_LABELS[department]}
+                  {toDepartmentLabel(department)}
                 </option>
               ))}
             </select>
@@ -378,7 +380,8 @@ export default function PastTestsPage() {
               {tests.map((test) => (
                 <li key={test.id} className="rounded-lg border border-slate-200 p-4">
                   <p className="text-sm font-semibold text-slate-900">
-                    {DEPARTMENT_LABELS[test.department] ?? test.department} · {test.school_level}. Schulstufe · {test.subject} · {test.teacher} · {test.test_number}. Test
+                    {toDepartmentLabel(test.department)} · {test.school_level}. Schulstufe ·{" "}
+                    {test.subject} · {test.teacher} · {test.test_number}. Test
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
                     Jahr des testes: {test.upload_year} · Datei: {test.file_name}
@@ -418,7 +421,7 @@ export default function PastTestsPage() {
                 >
                   {DEPARTMENT_OPTIONS.map((department) => (
                     <option key={department} value={department}>
-                      {DEPARTMENT_LABELS[department]}
+                      {toDepartmentLabel(department)}
                     </option>
                   ))}
                 </select>

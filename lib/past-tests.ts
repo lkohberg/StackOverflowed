@@ -18,6 +18,18 @@ type PastTestWithData = PastTest & {
   file_data: unknown;
 };
 
+const DEPARTMENT_SQL_EXPRESSION = `COALESCE(
+  NULLIF(BTRIM(department), ''),
+  CASE
+    WHEN class_name ~* 'ahitn$' THEN 'informatik'
+    WHEN class_name ~* 'ahmb$' THEN 'maschinenbau'
+    WHEN class_name ~* 'ahel$' THEN 'elektronik'
+    WHEN class_name ~* 'ahme$' THEN 'mechatronik'
+    WHEN class_name ~* 'ahad$' THEN 'art-design'
+    ELSE 'informatik'
+  END
+)`;
+
 function toBuffer(data: unknown) {
   if (Buffer.isBuffer(data)) {
     return data;
@@ -49,21 +61,9 @@ export async function listPastTests(filters: {
 
   const conditions: string[] = [];
   const values: Array<string | number> = [];
-  const departmentExpression = `COALESCE(
-    NULLIF(BTRIM(department), ''),
-    CASE
-      WHEN class_name ~* 'ahitn$' THEN 'informatik'
-      WHEN class_name ~* 'ahmb$' THEN 'maschinenbau'
-      WHEN class_name ~* 'ahel$' THEN 'elektronik'
-      WHEN class_name ~* 'ahme$' THEN 'mechatronik'
-      WHEN class_name ~* 'ahad$' THEN 'art-design'
-      ELSE 'informatik'
-    END
-  )`;
-
   if (filters.department) {
     values.push(filters.department);
-    conditions.push(`${departmentExpression} = $${values.length}`);
+    conditions.push(`${DEPARTMENT_SQL_EXPRESSION} = $${values.length}`);
   }
 
   if (filters.schoolLevel) {
@@ -93,7 +93,7 @@ export async function listPastTests(filters: {
   const result = await query<PastTest>(
     `SELECT id,
             COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
-            ${departmentExpression} AS department,
+            ${DEPARTMENT_SQL_EXPRESSION} AS department,
             class_name,
             subject,
             teacher,
@@ -130,17 +130,7 @@ export async function createPastTest(input: {
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
      RETURNING id,
                COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
-               COALESCE(
-                 NULLIF(BTRIM(department), ''),
-                 CASE
-                   WHEN class_name ~* 'ahitn$' THEN 'informatik'
-                   WHEN class_name ~* 'ahmb$' THEN 'maschinenbau'
-                   WHEN class_name ~* 'ahel$' THEN 'elektronik'
-                   WHEN class_name ~* 'ahme$' THEN 'mechatronik'
-                   WHEN class_name ~* 'ahad$' THEN 'art-design'
-                   ELSE 'informatik'
-                 END
-               ) AS department,
+               ${DEPARTMENT_SQL_EXPRESSION} AS department,
                class_name,
                subject,
                teacher,
@@ -172,17 +162,7 @@ export async function getPastTestFile(id: number) {
   const result = await query<PastTestWithData>(
     `SELECT id,
             COALESCE(school_level, LEFT(class_name, 1)) AS school_level,
-            COALESCE(
-              NULLIF(BTRIM(department), ''),
-              CASE
-                WHEN class_name ~* 'ahitn$' THEN 'informatik'
-                WHEN class_name ~* 'ahmb$' THEN 'maschinenbau'
-                WHEN class_name ~* 'ahel$' THEN 'elektronik'
-                WHEN class_name ~* 'ahme$' THEN 'mechatronik'
-                WHEN class_name ~* 'ahad$' THEN 'art-design'
-                ELSE 'informatik'
-              END
-            ) AS department,
+            ${DEPARTMENT_SQL_EXPRESSION} AS department,
             class_name,
             subject,
             teacher,

@@ -6,6 +6,13 @@ export const DEPARTMENT_OPTIONS = [
   "mechatronik",
   "art-design",
 ] as const;
+export const DEPARTMENT_LABELS: Record<Department, string> = {
+  informatik: "Informatik",
+  maschinenbau: "Maschinenbau",
+  elektronik: "Elektronik",
+  mechatronik: "Mechatronik",
+  "art-design": "Art & Design",
+};
 
 export const TEST_NUMBER_OPTIONS = [1, 2, 3, 4] as const;
 
@@ -94,8 +101,12 @@ export function isValidDepartment(value: string): value is Department {
 }
 
 export function toClassNameFromSchoolLevelDepartment(schoolLevel: string, department: string) {
-  if (!isValidSchoolLevel(schoolLevel) || !isValidDepartment(department)) {
-    return "";
+  if (!isValidSchoolLevel(schoolLevel)) {
+    throw new Error("Invalid school level for class name.");
+  }
+
+  if (!isValidDepartment(department)) {
+    throw new Error("Invalid department for class name.");
   }
 
   return `${schoolLevel}${DEPARTMENT_TO_CLASS_SUFFIX[department]}`;

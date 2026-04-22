@@ -25,7 +25,7 @@ export default function ChatPage() {
   const [openedAt] = useState(() => new Date().toISOString());
   const formRef = useRef<HTMLFormElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const previousMessageCountRef = useRef(0);
+  const hasAutoScrolledRef = useRef(false);
 
   const loadMessages = useCallback(async () => {
     try {
@@ -69,9 +69,9 @@ export default function ChatPage() {
   }, [loadMessages]);
 
   useEffect(() => {
-    const behavior = previousMessageCountRef.current === 0 ? "auto" : "smooth";
+    const behavior = hasAutoScrolledRef.current ? "smooth" : "auto";
     messagesEndRef.current?.scrollIntoView({ behavior, block: "end" });
-    previousMessageCountRef.current = messages.length;
+    hasAutoScrolledRef.current = true;
   }, [messages.length]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -154,9 +154,6 @@ export default function ChatPage() {
           {error ? <p className="mb-3 rounded-md bg-red-500/15 px-3 py-2 text-sm text-red-200">{error}</p> : null}
 
           <form ref={formRef} onSubmit={handleSubmit} className="flex items-end gap-3">
-            <p id="chat-input-help" className="sr-only">
-              Mit Enter wird die Nachricht gesendet. Mit Shift+Enter machst du einen Zeilenumbruch.
-            </p>
             <textarea
               value={text}
               onChange={(event) => setText(event.target.value)}
@@ -169,6 +166,9 @@ export default function ChatPage() {
               aria-describedby="chat-input-help"
               className="min-h-12 flex-1 resize-none rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-slate-100 outline-none transition placeholder:text-slate-400 focus:border-cyan-400"
             />
+            <p id="chat-input-help" className="sr-only">
+              Mit Enter wird die Nachricht gesendet. Mit Shift+Enter machst du einen Zeilenumbruch.
+            </p>
             <button
               type="submit"
               disabled={submitting}

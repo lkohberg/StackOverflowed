@@ -45,7 +45,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     let isCancelled = false;
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let timeoutId: ReturnType<typeof window.setTimeout> | undefined;
 
     const poll = async () => {
       await loadMessages();

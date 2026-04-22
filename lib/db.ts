@@ -148,8 +148,8 @@ export async function ensureChatSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
-    CREATE INDEX IF NOT EXISTS chat_messages_created_at_idx
-      ON chat_messages (created_at ASC);
+    CREATE INDEX IF NOT EXISTS chat_messages_created_at_id_idx
+      ON chat_messages (created_at ASC, id ASC);
   `);
 
   schemaReady.chat = true;

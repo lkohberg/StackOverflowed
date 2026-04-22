@@ -45,20 +45,23 @@ export default function ChatPage() {
 
   useEffect(() => {
     let isCancelled = false;
+    let timeoutId: number | undefined;
 
     const poll = async () => {
-      if (isCancelled) {
-        return;
-      }
       await loadMessages();
+
+      if (!isCancelled) {
+        timeoutId = window.setTimeout(poll, 1000);
+      }
     };
 
-    poll();
-    const interval = window.setInterval(poll, 1000);
+    void poll();
 
     return () => {
       isCancelled = true;
-      window.clearInterval(interval);
+      if (typeof timeoutId === "number") {
+        window.clearTimeout(timeoutId);
+      }
     };
   }, [loadMessages]);
 

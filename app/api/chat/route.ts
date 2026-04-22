@@ -5,27 +5,23 @@ type CreateChatMessageRequest = {
   message?: unknown;
 };
 
-const BAD_WORD_PATTERNS = [
-  /\barschloch\b/gi,
-  /\bhurensohn\b/gi,
-  /\bwichser\b/gi,
-  /\bschei(?:ß|ss)e?\b/gi,
-  /\bfuck\b/gi,
-  /\bshit\b/gi,
-  /\bbitch\b/gi,
-];
+const BAD_WORD_PATTERN = /\b(?:arschloch|hurensohn|wichser|schei(?:ß|ss)e?|fuck|shit|bitch)\b/gi;
 
 function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
 function maskBadWords(value: string) {
-  return BAD_WORD_PATTERNS.reduce((text, pattern) => text.replace(pattern, (match) => "*".repeat(match.length)), value);
+  return value.replace(BAD_WORD_PATTERN, (match) => "*".repeat(match.length));
 }
 
 function isValidIsoDate(value: string) {
   const parsed = Date.parse(value);
   return Number.isFinite(parsed);
+}
+
+function isMessageEntirelyMasked(value: string) {
+  return !value.replace(/\*/g, "").trim();
 }
 
 export async function GET(request: Request) {
@@ -60,7 +56,7 @@ export async function POST(request: Request) {
 
     const filteredMessage = maskBadWords(message);
 
-    if (!filteredMessage.replace(/\*/g, "").trim()) {
+    if (isMessageEntirelyMasked(filteredMessage)) {
       return NextResponse.json({ error: "Nachricht enthält keine zulässigen Inhalte." }, { status: 400 });
     }
 

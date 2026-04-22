@@ -5,7 +5,7 @@ type CreateChatMessageRequest = {
   message?: unknown;
 };
 
-const BAD_WORD_PATTERN = /\b(?:arschloch|hurensohn|wichser|schei(?:ß|ss)e?|fuck|shit|bitch)\b/gi;
+const BAD_WORD_PATTERN = /\b(?:fuck|fick)\b/gi;
 
 function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";

@@ -51,7 +51,7 @@ export default function ChatPage() {
       await loadMessages();
 
       if (!isCancelled) {
-        timeoutId = setTimeout(poll, 1000);
+        timeoutId = setTimeout(poll, 2000);
       }
     };
 
@@ -110,7 +110,7 @@ export default function ChatPage() {
 
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <h2 className="text-xl font-semibold text-slate-900">Live-Chat</h2>
-          <p className="mt-1 text-sm text-slate-500">Aktualisiert automatisch jede Sekunde.</p>
+          <p className="mt-1 text-sm text-slate-500">Aktualisiert automatisch alle 2 Sekunden.</p>
 
           {loading ? <p className="mt-4 text-slate-600">Nachrichten werden geladen...</p> : null}
 

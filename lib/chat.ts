@@ -6,6 +6,10 @@ export type ChatMessage = {
   created_at: string;
 };
 
+async function deleteStaleChatMessages() {
+  await query("DELETE FROM chat_messages WHERE created_at < NOW() - INTERVAL '24 hours';");
+}
+
 export async function listChatMessages(filters: { since?: string }) {
   await ensureChatSchema();
 
@@ -32,6 +36,9 @@ export async function listChatMessages(filters: { since?: string }) {
 
 export async function createChatMessage(input: { message: string }) {
   await ensureChatSchema();
+
+  // Remove messages older than 24 hours to keep storage minimal.
+  await deleteStaleChatMessages();
 
   const result = await query<ChatMessage>(
     `INSERT INTO chat_messages (message)

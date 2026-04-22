@@ -45,13 +45,13 @@ export default function ChatPage() {
 
   useEffect(() => {
     let isCancelled = false;
-    let timeoutId: ReturnType<typeof window.setTimeout> | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     const poll = async () => {
       await loadMessages();
 
       if (!isCancelled) {
-        timeoutId = window.setTimeout(poll, 1000);
+        timeoutId = setTimeout(poll, 1000);
       }
     };
 
@@ -60,7 +60,7 @@ export default function ChatPage() {
     return () => {
       isCancelled = true;
       if (timeoutId) {
-        window.clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
       }
     };
   }, [loadMessages]);

@@ -123,7 +123,10 @@ export default function ChatPage() {
     <div className="w-full px-4 py-6 sm:px-8 lg:px-12">
       <section className="mx-auto flex min-h-[75vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-xl">
         <header className="border-b border-slate-700 bg-slate-950/80 px-5 py-4">
-          <h1 className="text-2xl font-bold tracking-tight text-white"># zentraler-chat</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            <span aria-hidden="true"># </span>
+            zentraler-chat
+          </h1>
           <p className="mt-1 text-sm text-slate-300">
             Komplett anonym. Du siehst nur Nachrichten, die ab dem Öffnen dieses Reiters geschrieben wurden.
           </p>

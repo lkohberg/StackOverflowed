@@ -5,8 +5,18 @@ import { FormEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } fr
 type ChatMessage = {
   id: number;
   message: string;
+  sender_name: string;
   created_at: string;
 };
+
+const ALIAS_ADJECTIVES = ["Blauer", "Roter", "Grüner", "Gelber", "Schneller", "Ruhiger", "Cleverer", "Flinker", "Wilder", "Starker"];
+const ALIAS_NOUNS = ["Pinguin", "Adler", "Fuchs", "Bär", "Wolf", "Dachs", "Hase", "Otter", "Igel", "Luchs"];
+
+function generateAlias(): string {
+  const adj = ALIAS_ADJECTIVES[Math.floor(Math.random() * ALIAS_ADJECTIVES.length)];
+  const noun = ALIAS_NOUNS[Math.floor(Math.random() * ALIAS_NOUNS.length)];
+  return `${adj}${noun}`;
+}
 
 function formatTimestamp(value: string) {
   return new Date(value).toLocaleTimeString("de-AT", {
@@ -22,14 +32,25 @@ export default function ChatPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [text, setText] = useState("");
-  const [openedAt] = useState(() => new Date().toISOString());
+  const [alias, setAlias] = useState("");
   const formRef = useRef<HTMLFormElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const hasAutoScrolledRef = useRef(false);
 
+  useEffect(() => {
+    const stored = sessionStorage.getItem("chat-alias");
+    if (stored) {
+      setAlias(stored);
+      return;
+    }
+    const name = generateAlias();
+    sessionStorage.setItem("chat-alias", name);
+    setAlias(name);
+  }, []);
+
   const loadMessages = useCallback(async () => {
     try {
-      const response = await fetch(`/api/chat?since=${encodeURIComponent(openedAt)}`, { cache: "no-store" });
+      const response = await fetch("/api/chat", { cache: "no-store" });
 
       if (!response.ok) {
         const payload = (await response.json()) as { error?: string };
@@ -44,7 +65,7 @@ export default function ChatPage() {
     } finally {
       setLoading(false);
     }
-  }, [openedAt]);
+  }, []);
 
   useEffect(() => {
     let isCancelled = false;
@@ -89,7 +110,7 @@ export default function ChatPage() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, sender_name: alias }),
       });
 
       const payload = (await response.json()) as { error?: string };
@@ -121,31 +142,31 @@ export default function ChatPage() {
 
   return (
     <div className="w-full px-4 py-6 sm:px-8 lg:px-12">
-      <section className="mx-auto flex min-h-[75vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-xl">
-        <header className="border-b border-slate-700 bg-slate-950/80 px-5 py-4">
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+      <section className="mx-auto flex min-h-[75vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-ui-border bg-surface shadow-sm">
+        <header className="border-b border-ui-border bg-surface-raised px-5 py-4">
+          <h1 className="text-2xl font-bold tracking-tight text-body">
             <span aria-hidden="true"># </span>
             zentraler-chat
           </h1>
-          <p className="mt-1 text-sm text-slate-300">
-            Komplett anonym. Du siehst nur Nachrichten, die ab dem Öffnen dieses Reiters geschrieben wurden.
+          <p className="mt-1 text-sm text-muted">
+            Du schreibst als <span className="font-medium text-accent">{alias || "…"}</span>. Nachrichten der letzten 48 Stunden sind für alle sichtbar.
           </p>
         </header>
 
-        <div className="flex-1 overflow-y-auto bg-slate-900 px-4 py-5 sm:px-6">
-          {loading ? <p className="text-slate-300">Nachrichten werden geladen...</p> : null}
+        <div className="flex-1 overflow-y-auto bg-surface px-4 py-5 sm:px-6">
+          {loading ? <p className="text-muted">Nachrichten werden geladen...</p> : null}
 
           {!loading && messages.length === 0 ? (
-            <p className="text-slate-300">Noch keine Nachrichten seit dem Öffnen dieses Reiters.</p>
+            <p className="text-muted">Noch keine Nachrichten in den letzten 48 Stunden.</p>
           ) : (
             <ul className="grid gap-3">
               {messages.map((message) => (
-                <li key={message.id} className="rounded-xl bg-slate-800/90 px-4 py-3 text-slate-100">
+                <li key={message.id} className="rounded-xl border border-ui-border bg-surface-raised px-4 py-3">
                   <div className="mb-1 flex items-center gap-2 text-xs">
-                    <span className="font-semibold text-cyan-300">Anonym</span>
-                    <span className="text-slate-400">{formatTimestamp(message.created_at)}</span>
+                    <span className="font-semibold text-accent">{message.sender_name}</span>
+                    <span className="text-muted">{formatTimestamp(message.created_at)}</span>
                   </div>
-                  <p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-100">{message.message}</p>
+                  <p className="whitespace-pre-wrap break-words text-sm leading-6 text-body">{message.message}</p>
                 </li>
               ))}
             </ul>
@@ -153,8 +174,8 @@ export default function ChatPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="border-t border-slate-700 bg-slate-950 px-4 py-4 sm:px-6">
-          {error ? <p className="mb-3 rounded-md bg-red-500/15 px-3 py-2 text-sm text-red-200">{error}</p> : null}
+        <div className="border-t border-ui-border bg-surface-raised px-4 py-4 sm:px-6">
+          {error ? <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p> : null}
 
           <form ref={formRef} onSubmit={handleSubmit} className="flex items-end gap-3">
             <textarea
@@ -168,7 +189,7 @@ export default function ChatPage() {
               maxLength={500}
               aria-label="Nachricht eingeben"
               aria-describedby="chat-input-help"
-              className="min-h-12 flex-1 resize-none rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-slate-100 outline-none transition placeholder:text-slate-400 focus:border-cyan-400"
+              className="min-h-12 flex-1 resize-none rounded-xl border border-ui-border bg-surface px-3 py-2 text-body outline-none transition placeholder:text-muted focus:border-accent"
             />
             <p id="chat-input-help" className="sr-only">
               Mit Enter wird die Nachricht gesendet. Mit Shift+Enter machst du einen Zeilenumbruch.
@@ -176,7 +197,7 @@ export default function ChatPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-xl bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-accent px-4 py-2 font-medium text-accent-fg transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? "Sende..." : "Senden"}
             </button>

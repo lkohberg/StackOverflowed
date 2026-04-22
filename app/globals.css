@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Design tokens – single source of truth for colours used across Chat, NavBar, and pages. */
+@theme {
+  --color-surface: #ffffff;
+  --color-surface-raised: #f8fafc;
+  --color-ui-border: #e2e8f0;
+  --color-body: #0f172a;
+  --color-muted: #64748b;
+  --color-accent: #d97706;
+  --color-accent-hover: #b45309;
+  --color-accent-fg: #ffffff;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #0f172a;

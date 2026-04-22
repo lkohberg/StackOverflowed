@@ -18,11 +18,11 @@ export function NavBar() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-slate-100 bg-white">
+    <header className="border-b border-ui-border bg-surface">
       <div className="flex w-full flex-col items-start gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-4 lg:px-12">
         <Link
           href="/"
-          className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-slate-800 transition-colors hover:text-slate-500 sm:text-sm"
+          className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-body transition-colors hover:text-muted sm:text-sm"
         >
           <Image src={faviconImage} alt="StackOverflowed Logo" width={16} height={16} priority />
           <span>StackOverflowed</span>
@@ -36,8 +36,8 @@ export function NavBar() {
                 href={item.href}
                 className={`rounded px-2 py-1.5 text-xs font-medium whitespace-nowrap transition-colors duration-150 sm:px-3 sm:py-2 sm:text-sm ${
                   isActive
-                    ? "text-amber-600"
-                    : "text-slate-500 hover:text-slate-900"
+                    ? "text-accent"
+                    : "text-muted hover:text-body"
                 }`}
               >
                 {item.label}

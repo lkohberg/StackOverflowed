@@ -3,6 +3,7 @@ import { createChatMessage, listChatMessages } from "@/lib/chat";
 
 type CreateChatMessageRequest = {
   message?: unknown;
+  sender_name?: unknown;
 };
 
 const BAD_WORD_PATTERN =
@@ -61,7 +62,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Nachricht enthält keine zulässigen Inhalte." }, { status: 400 });
     }
 
-    const createdMessage = await createChatMessage({ message: filteredMessage });
+    const rawSenderName = normalizeText(body.sender_name);
+    const senderName = rawSenderName.slice(0, 30) || "Anonym";
+
+    const createdMessage = await createChatMessage({ message: filteredMessage, sender_name: senderName });
     return NextResponse.json({ message: createdMessage }, { status: 201 });
   } catch (error) {
     console.error("POST /api/chat failed", error);

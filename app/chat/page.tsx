@@ -163,6 +163,7 @@ export default function ChatPage() {
               rows={2}
               required
               maxLength={500}
+              aria-label="Nachricht eingeben"
               aria-describedby="chat-input-help"
               className="min-h-12 flex-1 resize-none rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-slate-100 outline-none transition placeholder:text-slate-400 focus:border-cyan-400"
             />

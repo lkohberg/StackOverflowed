@@ -150,6 +150,10 @@ export async function ensureChatSchema() {
 
     CREATE INDEX IF NOT EXISTS chat_messages_created_at_id_idx
       ON chat_messages (created_at ASC, id ASC);
+
+    -- Migration for existing databases created before sender_name was introduced.
+    ALTER TABLE chat_messages
+      ADD COLUMN IF NOT EXISTS sender_name TEXT NOT NULL DEFAULT 'Anonym';
   `);
 
   schemaReady.chat = true;

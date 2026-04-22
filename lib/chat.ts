@@ -3,11 +3,12 @@ import { ensureChatSchema, query } from "@/lib/db";
 export type ChatMessage = {
   id: number;
   message: string;
+  sender_name: string;
   created_at: string;
 };
 
 async function deleteStaleChatMessages() {
-  await query("DELETE FROM chat_messages WHERE created_at < NOW() - INTERVAL '24 hours';");
+  await query("DELETE FROM chat_messages WHERE created_at < NOW() - INTERVAL '48 hours';");
 }
 
 export async function listChatMessages(filters: { since?: string }) {
@@ -24,7 +25,7 @@ export async function listChatMessages(filters: { since?: string }) {
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
   const result = await query<ChatMessage>(
-    `SELECT id, message, created_at
+    `SELECT id, message, sender_name, created_at
      FROM chat_messages
      ${whereClause}
      ORDER BY created_at ASC, id ASC;`,
@@ -34,17 +35,17 @@ export async function listChatMessages(filters: { since?: string }) {
   return result.rows;
 }
 
-export async function createChatMessage(input: { message: string }) {
+export async function createChatMessage(input: { message: string; sender_name: string }) {
   await ensureChatSchema();
 
-  // Remove messages older than 24 hours to keep storage minimal.
+  // Remove messages older than 48 hours to keep storage minimal.
   await deleteStaleChatMessages();
 
   const result = await query<ChatMessage>(
-    `INSERT INTO chat_messages (message)
-     VALUES ($1)
-     RETURNING id, message, created_at;`,
-    [input.message],
+    `INSERT INTO chat_messages (message, sender_name)
+     VALUES ($1, $2)
+     RETURNING id, message, sender_name, created_at;`,
+    [input.message, input.sender_name],
   );
 
   return result.rows[0];

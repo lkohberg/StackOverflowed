@@ -6,7 +6,7 @@ type CreateChatMessageRequest = {
 };
 
 const BAD_WORD_PATTERN =
-  /\b(?:fuck(?:ing|er|ed|s)?|shit(?:ty)?|bitch(?:es)?|fick(?:en|st|t)?|wichs(?:er|ers|t|te)?|hurensohn|hurenso[hc]n|hurensöhne|hure[n]?|n[i1!]g+(?:e[rg]|a|er|ah?|az?|er[sz])?|n[e3]g+(?:e[rg]|a|er|ah?|az?|er[sz])?|porn(?:o|os|hub)?|xvideo[sz]?|xhamster|onlyfan[sz]|camgirl|camboy|dildo[sz]?|vibrator(?:en)?|fetisch|gangbang|creampie|buk+ake|hentai|tentakelporn)\b/gi;
+  /\b(?:bitch(?:es)?|fick(?:en|st|t)?|wichs(?:er|ers|t|te)?|hurensohn|hurenso[hc]n|hurensöhne|hure[n]?|n[i1!]g+(?:e[rg]|a|er|ah?|az?|er[sz])?|n[e3]g+(?:e[rg]|a|er|ah?|az?|er[sz])?|porn(?:o|os|hub)?|xvideo[sz]?|xhamster|onlyfan[sz]|camgirl|camboy|dildo[sz]?|vibrator(?:en)?|fetisch|gangbang|creampie|buk+ake|hentai|tentakelporn)\b/gi;
 
 function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";

@@ -25,6 +25,7 @@ export default function ChatPage() {
   const [openedAt] = useState(() => new Date().toISOString());
   const formRef = useRef<HTMLFormElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const previousMessageCountRef = useRef(0);
 
   const loadMessages = useCallback(async () => {
     try {
@@ -68,8 +69,10 @@ export default function ChatPage() {
   }, [loadMessages]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages]);
+    const behavior = previousMessageCountRef.current === 0 ? "auto" : "smooth";
+    messagesEndRef.current?.scrollIntoView({ behavior, block: "end" });
+    previousMessageCountRef.current = messages.length;
+  }, [messages.length]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -156,12 +159,16 @@ export default function ChatPage() {
               onChange={(event) => setText(event.target.value)}
               onKeyDown={handleKeyDown}
               name="message"
-              placeholder="Nachricht schreiben... (Enter senden, Shift+Enter Zeilenumbruch)"
+              placeholder="Nachricht schreiben..."
               rows={2}
               required
               maxLength={500}
+              aria-describedby="chat-input-help"
               className="min-h-12 flex-1 resize-none rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-slate-100 outline-none transition placeholder:text-slate-400 focus:border-cyan-400"
             />
+            <p id="chat-input-help" className="sr-only">
+              Mit Enter wird die Nachricht gesendet. Mit Shift+Enter machst du einen Zeilenumbruch.
+            </p>
             <button
               type="submit"
               disabled={submitting}

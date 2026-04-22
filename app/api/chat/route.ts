@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createChatMessage, listChatMessages } from "@/lib/chat";
+import { createChatMessage, deleteChatMessage, listChatMessages } from "@/lib/chat";
+import { isAdminRequest } from "@/lib/admin-auth";
 
 type CreateChatMessageRequest = {
   message?: unknown;
@@ -11,6 +12,19 @@ const BAD_WORD_PATTERN =
 
 function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function parseId(value: unknown) {
+  if (typeof value === "number" && Number.isInteger(value)) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isInteger(parsed) ? parsed : null;
+  }
+
+  return null;
 }
 
 function maskBadWords(value: string) {
@@ -70,5 +84,31 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("POST /api/chat failed", error);
     return NextResponse.json({ error: "Nachricht konnte nicht gesendet werden." }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  if (!isAdminRequest(request)) {
+    return NextResponse.json({ error: "Nicht autorisiert." }, { status: 401 });
+  }
+
+  try {
+    const body = (await request.json()) as { id?: unknown };
+    const id = parseId(body.id);
+
+    if (!id || id <= 0) {
+      return NextResponse.json({ error: "Ungültige Nachrichten-ID." }, { status: 400 });
+    }
+
+    const deleted = await deleteChatMessage(id);
+
+    if (!deleted) {
+      return NextResponse.json({ error: "Nachricht nicht gefunden." }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("DELETE /api/chat failed", error);
+    return NextResponse.json({ error: "Nachricht konnte nicht gelöscht werden." }, { status: 500 });
   }
 }

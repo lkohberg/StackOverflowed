@@ -50,3 +50,16 @@ export async function createChatMessage(input: { message: string; sender_name: s
 
   return result.rows[0];
 }
+
+export async function deleteChatMessage(id: number) {
+  await ensureChatSchema();
+
+  const result = await query<{ id: number }>(
+    `DELETE FROM chat_messages
+     WHERE id = $1
+     RETURNING id;`,
+    [id],
+  );
+
+  return result.rowCount > 0;
+}

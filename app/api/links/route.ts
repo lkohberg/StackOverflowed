@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createLink, DuplicateLinkError, listLinks } from "@/lib/links";
+import { createLink, deleteLink, DuplicateLinkError, listLinks } from "@/lib/links";
+import { isAdminRequest } from "@/lib/admin-auth";
 
 type CreateLinkRequest = {
   title?: unknown;
@@ -9,6 +10,19 @@ type CreateLinkRequest = {
 
 function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function parseId(value: unknown) {
+  if (typeof value === "number" && Number.isInteger(value)) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isInteger(parsed) ? parsed : null;
+  }
+
+  return null;
 }
 
 function isValidHttpUrl(value: string) {
@@ -60,5 +74,31 @@ export async function POST(request: Request) {
 
     console.error("POST /api/links failed", error);
     return NextResponse.json({ error: "Link konnte nicht gespeichert werden." }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  if (!isAdminRequest(request)) {
+    return NextResponse.json({ error: "Nicht autorisiert." }, { status: 401 });
+  }
+
+  try {
+    const body = (await request.json()) as { id?: unknown };
+    const id = parseId(body.id);
+
+    if (!id || id <= 0) {
+      return NextResponse.json({ error: "Ungültige Link-ID." }, { status: 400 });
+    }
+
+    const deleted = await deleteLink(id);
+
+    if (!deleted) {
+      return NextResponse.json({ error: "Link nicht gefunden." }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("DELETE /api/links failed", error);
+    return NextResponse.json({ error: "Link konnte nicht gelöscht werden." }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useAdminAuth } from "@/lib/use-admin-auth";
 
 type ChatMessage = {
   id: number;
@@ -27,12 +28,14 @@ function formatTimestamp(value: string) {
 }
 
 export default function ChatPage() {
+  const { adminHash, isAdmin } = useAdminAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [text, setText] = useState("");
   const [alias, setAlias] = useState("");
+  const [deletingMessageId, setDeletingMessageId] = useState<number | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const hasAutoScrolledRef = useRef(false);
@@ -140,6 +143,37 @@ export default function ChatPage() {
     }
   };
 
+  const handleDeleteMessage = async (id: number) => {
+    if (!isAdmin || !adminHash) {
+      return;
+    }
+
+    setError(null);
+    setDeletingMessageId(id);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-hash": adminHash,
+        },
+        body: JSON.stringify({ id }),
+      });
+      const payload = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Nachricht konnte nicht gelöscht werden.");
+      }
+
+      await loadMessages();
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "Nachricht konnte nicht gelöscht werden.");
+    } finally {
+      setDeletingMessageId(null);
+    }
+  };
+
   return (
     <div className="w-full px-4 py-6 sm:px-8 lg:px-12">
       <section className="mx-auto flex h-[75vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-ui-border bg-surface shadow-sm">
@@ -162,9 +196,23 @@ export default function ChatPage() {
             <ul className="grid gap-3">
               {messages.map((message) => (
                 <li key={message.id} className="rounded-xl border border-ui-border bg-surface-raised px-4 py-3">
-                  <div className="mb-1 flex items-center gap-2 text-xs">
+                  <div className="mb-1 flex items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2">
                     <span className="font-semibold text-accent">{message.sender_name}</span>
                     <span className="text-muted">{formatTimestamp(message.created_at)}</span>
+                    </div>
+                    {isAdmin ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void handleDeleteMessage(message.id);
+                        }}
+                        disabled={deletingMessageId === message.id}
+                        className="rounded-md border border-red-200 px-2 py-1 text-[11px] font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {deletingMessageId === message.id ? "Lösche..." : "Löschen"}
+                      </button>
+                    ) : null}
                   </div>
                   <p className="whitespace-pre-wrap break-words text-sm leading-6 text-body">{message.message}</p>
                 </li>

@@ -142,7 +142,7 @@ export default function ChatPage() {
 
   return (
     <div className="w-full px-4 py-6 sm:px-8 lg:px-12">
-      <section className="mx-auto flex min-h-[75vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-ui-border bg-surface shadow-sm">
+      <section className="mx-auto flex h-[75vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-ui-border bg-surface shadow-sm">
         <header className="border-b border-ui-border bg-surface-raised px-5 py-4">
           <h1 className="text-2xl font-bold tracking-tight text-body">
             <span aria-hidden="true"># </span>
@@ -153,7 +153,7 @@ export default function ChatPage() {
           </p>
         </header>
 
-        <div className="flex-1 overflow-y-auto bg-surface px-4 py-5 sm:px-6">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-surface px-4 py-5 sm:px-6">
           {loading ? <p className="text-muted">Nachrichten werden geladen...</p> : null}
 
           {!loading && messages.length === 0 ? (

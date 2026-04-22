@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useAdminAuth } from "@/lib/use-admin-auth";
 
 type LinkEntry = {
   id: number;
@@ -11,9 +12,11 @@ type LinkEntry = {
 };
 
 export default function LinksPage() {
+  const { adminHash, isAdmin } = useAdminAuth();
   const [links, setLinks] = useState<LinkEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -70,6 +73,38 @@ export default function LinksPage() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!isAdmin || !adminHash) {
+      return;
+    }
+
+    setError(null);
+    setDeletingId(id);
+
+    try {
+      const response = await fetch("/api/links", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-hash": adminHash,
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      const data = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Link konnte nicht gelöscht werden.");
+      }
+
+      setLinks((current) => current.filter((link) => link.id !== id));
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "Link konnte nicht gelöscht werden.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div className="w-full px-6 py-8 sm:px-8 lg:px-12">
       <div className="space-y-8">
@@ -89,9 +124,23 @@ export default function LinksPage() {
           <ul className="mt-4 grid gap-3">
             {links.map((link) => (
               <li key={link.id} className="rounded-lg border border-slate-200 p-4 transition hover:border-slate-300 hover:shadow-sm">
-                <a href={link.url} target="_blank" rel="noreferrer" className="text-lg font-semibold text-slate-900 hover:underline">
-                  {link.title}
-                </a>
+                <div className="flex items-start justify-between gap-3">
+                  <a href={link.url} target="_blank" rel="noreferrer" className="text-lg font-semibold text-slate-900 hover:underline">
+                    {link.title}
+                  </a>
+                  {isAdmin ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void handleDelete(link.id);
+                      }}
+                      disabled={deletingId === link.id}
+                      className="rounded-md border border-red-200 px-2 py-1 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {deletingId === link.id ? "Lösche..." : "Löschen"}
+                    </button>
+                  ) : null}
+                </div>
                 {link.description ? <p className="mt-1 text-slate-600">{link.description}</p> : null}
               </li>
             ))}

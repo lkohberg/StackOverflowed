@@ -205,3 +205,16 @@ export async function getPastTestFile(id: number) {
     created_at: row.created_at,
   };
 }
+
+export async function deletePastTest(id: number) {
+  await ensurePastTestsSchema();
+
+  const result = await query<{ id: number }>(
+    `DELETE FROM past_tests
+     WHERE id = $1
+     RETURNING id;`,
+    [id],
+  );
+
+  return result.rowCount > 0;
+}

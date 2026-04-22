@@ -50,3 +50,16 @@ export async function createGame(input: {
     throw error;
   }
 }
+
+export async function deleteGame(id: number) {
+  await ensureGamesSchema();
+
+  const result = await query<{ id: number }>(
+    `DELETE FROM games
+     WHERE id = $1
+     RETURNING id;`,
+    [id],
+  );
+
+  return result.rowCount > 0;
+}

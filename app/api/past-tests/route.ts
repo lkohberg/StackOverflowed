@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createPastTest, getPastTestFile, listPastTests } from "@/lib/past-tests";
+import { createPastTest, deletePastTest, getPastTestFile, listPastTests } from "@/lib/past-tests";
 import {
   isValidDepartment,
   isValidSchoolLevel,
@@ -8,6 +8,7 @@ import {
   isValidTestNumber,
   toClassNameFromSchoolLevelDepartment,
 } from "@/lib/past-tests-catalog";
+import { isAdminRequest } from "@/lib/admin-auth";
 
 const ALLOWED_ZIP_TYPES = new Set([
   "application/zip",
@@ -200,5 +201,31 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("POST /api/past-tests failed", error);
     return NextResponse.json({ error: "Test konnte nicht hochgeladen werden." }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  if (!isAdminRequest(request)) {
+    return NextResponse.json({ error: "Nicht autorisiert." }, { status: 401 });
+  }
+
+  try {
+    const body = (await request.json()) as { id?: unknown };
+    const id = parseInteger(typeof body.id === "string" || typeof body.id === "number" ? String(body.id) : "");
+
+    if (!id || id <= 0) {
+      return NextResponse.json({ error: "Ungültige Test-ID." }, { status: 400 });
+    }
+
+    const deleted = await deletePastTest(id);
+
+    if (!deleted) {
+      return NextResponse.json({ error: "Test nicht gefunden." }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("DELETE /api/past-tests failed", error);
+    return NextResponse.json({ error: "Test konnte nicht gelöscht werden." }, { status: 500 });
   }
 }

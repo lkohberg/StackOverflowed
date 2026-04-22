@@ -50,3 +50,16 @@ export async function createLink(input: {
     throw error;
   }
 }
+
+export async function deleteLink(id: number) {
+  await ensureLinksSchema();
+
+  const result = await query<{ id: number }>(
+    `DELETE FROM links
+     WHERE id = $1
+     RETURNING id;`,
+    [id],
+  );
+
+  return result.rowCount > 0;
+}

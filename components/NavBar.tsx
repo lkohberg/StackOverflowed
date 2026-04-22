@@ -11,6 +11,7 @@ const navItems = [
   { href: "/links", label: "Links" },
   { href: "/past-tests", label: "Alte Tests" },
   { href: "/formulare", label: "Formulare" },
+  { href: "/chat", label: "Chat" },
 ];
 
 export function NavBar() {

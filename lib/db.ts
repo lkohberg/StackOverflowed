@@ -23,6 +23,7 @@ const schemaReady = {
   games: false,
   links: false,
   pastTests: false,
+  chat: false,
 };
 
 export async function ensureGamesSchema() {
@@ -131,6 +132,27 @@ export async function ensurePastTestsSchema() {
   `);
 
   schemaReady.pastTests = true;
+}
+
+export async function ensureChatSchema() {
+  if (schemaReady.chat) {
+    return;
+  }
+
+  const pool = getPool();
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS chat_messages (
+      id BIGSERIAL PRIMARY KEY,
+      message TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE INDEX IF NOT EXISTS chat_messages_created_at_id_idx
+      ON chat_messages (created_at ASC, id ASC);
+  `);
+
+  schemaReady.chat = true;
 }
 
 export async function query<T extends Record<string, unknown>>(text: string, values: unknown[] = []) {

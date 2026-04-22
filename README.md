@@ -12,6 +12,7 @@ Instead of resources being scattered across chats, cloud folders, and personal b
 - **Helpful links**
 - **Browser games** for breaks
 - **School forms** as downloadable PDFs
+- **Anonymer Live-Chat** für schnelle Nachrichten
 
 ## What it does
 
@@ -21,6 +22,7 @@ The app provides a small, focused set of pages:
 - `/links` – list and submit useful links
 - `/browser-games` – list and submit browser games
 - `/formulare` – browse and download PDF forms from the repository
+- `/chat` – anonymous centralized chat (starts from tab-open time, auto-refreshes every second)
 
 The UI text is mostly in German because the target users are local students.
 
@@ -30,7 +32,7 @@ StackOverflowed is a Next.js app with:
 
 - **App Router pages** for the frontend (`app/*/page.tsx`)
 - **Route handlers** for APIs (`app/api/*/route.ts`)
-- **PostgreSQL (Neon)** for dynamic data (`games`, `links`, `past_tests`)
+- **PostgreSQL (Neon)** for dynamic data (`games`, `links`, `past_tests`, `chat_messages`)
 
 Data flow is straightforward:
 1. Pages fetch data from internal API endpoints.
@@ -43,6 +45,7 @@ Data flow is straightforward:
 - `games` and `links` enforce unique URLs.
 - `past_tests` stores ZIP files directly in PostgreSQL (`BYTEA`) plus metadata for filtering.
 - School forms are static PDFs from the `formulare/` directory, served through `/api/formulare` with filename/path validation.
+- `chat_messages` stores anonymous messages and applies a coarse bad-word mask in the API before insert.
 
 ## Local development
 
@@ -83,6 +86,8 @@ app/
     links/route.ts
     past-tests/route.ts
     formulare/route.ts
+    chat/route.ts
+  chat/page.tsx
   browser-games/page.tsx
   links/page.tsx
   past-tests/page.tsx
@@ -98,4 +103,3 @@ lib/
 formulare/
   *.pdf
 ```
-

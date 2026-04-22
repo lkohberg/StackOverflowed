@@ -9,7 +9,7 @@ export type ChatMessage = {
 export async function listChatMessages(filters: { since?: string }) {
   await ensureChatSchema();
 
-  const values: string[] = [];
+  const values: unknown[] = [];
   const conditions: string[] = [];
 
   if (filters.since) {

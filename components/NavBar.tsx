@@ -17,7 +17,7 @@ const navItems = [
   { href: "/chat", label: "Chat" },
 ];
 
-const LOGO_TAP_TARGET = 5;
+const LOGO_TAPS_REQUIRED_FOR_UNLOCK = 5;
 
 async function hashPassword(value: string) {
   const encoder = new TextEncoder();
@@ -49,13 +49,13 @@ export function NavBar() {
     }
 
     setLogoTapCount((current) => {
-      const next = Math.min(current + 1, LOGO_TAP_TARGET);
+      const next = Math.min(current + 1, LOGO_TAPS_REQUIRED_FOR_UNLOCK);
       return next;
     });
   };
 
   const handleNavTap = (href: string) => {
-    if (adminUnlocked || logoTapCount < LOGO_TAP_TARGET) {
+    if (adminUnlocked || logoTapCount < LOGO_TAPS_REQUIRED_FOR_UNLOCK) {
       return;
     }
 

@@ -46,7 +46,6 @@ const BAD_WORD_VARIANTS = [
   "gangbang",
   "creampie",
   "buk+ake",
-  "bukkake",
   "hentai",
   "tentakelporn",
   "s[e3]x+y(?:s|ies|ie)?",

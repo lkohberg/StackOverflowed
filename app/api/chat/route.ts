@@ -7,8 +7,61 @@ type CreateChatMessageRequest = {
   sender_name?: unknown;
 };
 
-const BAD_WORD_PATTERN =
-  /\b(?:bitch(?:es)?|b[i1!]tch(?:e[sz])?|biatch|fick(?:en|st|t)?|f[i1!](?:c|k|q)k(?:en|st|t)?|f\*ck|fck|fk|wichs(?:er|ers|t|te|en)?|wixx(?:er|ers|t|te|en)?|hurensohn|hurenso[hc]n|hurensöhne|h\*rensohn|hsohn|hure[n]?|schlampe[n]?|nutte[nr]?|nutt[ea]n?|n(?:i|1|!|e|3)g+(?:e[rg]|a|er|ah?|az?|er[sz]|as?)?|niqqa|nigga|niga|negger|porn(?:o|os|hub)?|pr0n|xvideo[sz]?|xhamster|onlyfan[sz]|ofans?|camgirl|camboy|dildo[sz]?|vibrator(?:en)?|fetisch|gangbang|creampie|buk+ake|bukkake|hentai|tentakelporn|s[e3]x+y(?:s|ies|ie)?|s[e3]x+i(?:s)?|s3x|seggs|slut(?:s)?|whore(?:s)?|puta|puto|n(?:u|ü|v)+t+[e3]+(?:n|r)?|n[uü]t+t+[e3]+(?:n|r)?)\b/gi;
+const BAD_WORD_VARIANTS = [
+  "bitch(?:es)?",
+  "b[i1!]tch(?:e[sz])?",
+  "biatch",
+  "fick(?:en|st|t)?",
+  "f[i1!](?:c|k|q)k(?:en|st|t)?",
+  "f\\*ck",
+  "fck",
+  "fk",
+  "wichs(?:er|ers|t|te|en)?",
+  "wixx(?:er|ers|t|te|en)?",
+  "hurensohn",
+  "hurenso[hc]n",
+  "hurensöhne",
+  "h\\*rensohn",
+  "hsohn",
+  "hure[n]?",
+  "schlampe[n]?",
+  "nutte[nr]?",
+  "nutt[ea]n?",
+  "n(?:i|1|!|e|3)g+(?:e[rg]|a|er|ah?|az?|er[sz]|as?)?",
+  "niqqa",
+  "nigga",
+  "niga",
+  "negger",
+  "porn(?:o|os|hub)?",
+  "pr0n",
+  "xvideo[sz]?",
+  "xhamster",
+  "onlyfan[sz]",
+  "ofans?",
+  "camgirl",
+  "camboy",
+  "dildo[sz]?",
+  "vibrator(?:en)?",
+  "fetisch",
+  "gangbang",
+  "creampie",
+  "buk+ake",
+  "bukkake",
+  "hentai",
+  "tentakelporn",
+  "s[e3]x+y(?:s|ies|ie)?",
+  "s[e3]x+i(?:s)?",
+  "s3x",
+  "seggs",
+  "slut(?:s)?",
+  "whore(?:s)?",
+  "puta",
+  "puto",
+  "n(?:u|ü|v)+t+[e3]+(?:n|r)?",
+  "n[uü]t+t+[e3]+(?:n|r)?",
+];
+
+const BAD_WORD_PATTERN = new RegExp(`\\b(?:${BAD_WORD_VARIANTS.join("|")})\\b`, "gi");
 
 function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";

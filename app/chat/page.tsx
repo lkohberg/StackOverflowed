@@ -56,8 +56,8 @@ export default function ChatPage() {
 
     const shouldGenerateNewAlias = wasAdminRef.current;
     wasAdminRef.current = false;
-    const stored = sessionStorage.getItem("chat-alias");
-    if (stored && !shouldGenerateNewAlias && stored.trim().toLowerCase() !== ADMIN_DISPLAY_NAME.toLowerCase()) {
+    const stored = sessionStorage.getItem("chat-alias")?.trim() ?? "";
+    if (stored && !shouldGenerateNewAlias && !isAuthorityMessage(stored)) {
       setAlias(stored);
       return;
     }

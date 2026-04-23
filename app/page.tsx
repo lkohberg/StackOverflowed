@@ -100,7 +100,7 @@ export default function Home() {
       <footer className="mt-10 w-full bg-black px-4 py-10 text-zinc-100 sm:px-8 sm:py-12 lg:px-12">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-zinc-400">Zum Schluss no a Schmäh</p>
+            <p className="text-sm uppercase tracking-[0.2em] text-zinc-400">Warum eigentlich des ois?</p>
             <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-zinc-200 sm:text-base">
               <li>{`"Heit lern i fix ... oba erst nochm ersten Bier."`}</li>
               <li>{`"Schwänzen? Bledsinn des is Zeitausgleich"`}</li>

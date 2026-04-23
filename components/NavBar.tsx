@@ -17,8 +17,8 @@ const navItems = [
   { href: "/chat", label: "Chat" },
 ];
 
-const LOGO_TAP_TARGET = 8;
-const CHAT_TAP_TARGET = 2;
+const LOGO_TAP_TARGET = 5;
+const CHAT_TAP_TARGET = 1;
 
 async function hashPassword(value: string) {
   const encoder = new TextEncoder();
@@ -35,7 +35,7 @@ export function NavBar() {
   const { isAdmin, setAdminHash } = useAdminAuth();
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [logoTapCount, setLogoTapCount] = useState(0);
-  const [chatTapCount, setChatTapCount] = useState(0);
+  const [, setChatTapCount] = useState(0);
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [adminError, setAdminError] = useState<string | null>(null);

@@ -12,11 +12,9 @@ function readAdminHash() {
 }
 
 export function useAdminAuth() {
-  const [adminHash, setAdminHashState] = useState("");
+  const [adminHash, setAdminHashState] = useState(() => readAdminHash());
 
   useEffect(() => {
-    setAdminHashState(readAdminHash());
-
     const syncAdminHash = () => {
       setAdminHashState(readAdminHash());
     };

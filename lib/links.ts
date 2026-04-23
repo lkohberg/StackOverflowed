@@ -61,5 +61,5 @@ export async function deleteLink(id: number) {
     [id],
   );
 
-  return result.rowCount > 0;
+  return (result.rowCount ?? 0) > 0;
 }

@@ -17,8 +17,7 @@ const navItems = [
   { href: "/chat", label: "Chat" },
 ];
 
-const LOGO_TAP_TARGET = 8;
-const CHAT_TAP_TARGET = 2;
+const LOGO_TAPS_REQUIRED = 5;
 
 async function hashPassword(value: string) {
   const encoder = new TextEncoder();
@@ -35,7 +34,6 @@ export function NavBar() {
   const { isAdmin, setAdminHash } = useAdminAuth();
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [logoTapCount, setLogoTapCount] = useState(0);
-  const [chatTapCount, setChatTapCount] = useState(0);
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [adminError, setAdminError] = useState<string | null>(null);
@@ -51,34 +49,21 @@ export function NavBar() {
     }
 
     setLogoTapCount((current) => {
-      const next = Math.min(current + 1, LOGO_TAP_TARGET);
-      if (next === LOGO_TAP_TARGET) {
-        setChatTapCount(0);
-      }
+      const next = Math.min(current + 1, LOGO_TAPS_REQUIRED);
       return next;
     });
   };
 
   const handleNavTap = (href: string) => {
-    if (adminUnlocked || logoTapCount < LOGO_TAP_TARGET) {
+    if (adminUnlocked || logoTapCount < LOGO_TAPS_REQUIRED) {
       return;
     }
 
     if (href !== "/chat") {
-      setChatTapCount(0);
       return;
     }
-
-    setChatTapCount((current) => {
-      const next = current + 1;
-
-      if (next >= CHAT_TAP_TARGET) {
-        setAdminUnlocked(true);
-        sessionStorage.setItem(ADMIN_UNLOCKED_STORAGE_KEY, "true");
-      }
-
-      return next;
-    });
+    setAdminUnlocked(true);
+    sessionStorage.setItem(ADMIN_UNLOCKED_STORAGE_KEY, "true");
   };
 
   const handleAdminLogin = async (event: FormEvent<HTMLFormElement>) => {

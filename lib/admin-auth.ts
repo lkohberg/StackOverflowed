@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "crypto";
 
-const DEFAULT_ADMIN_PASSWORD_HASH = "48a3c4542c34b11e89f22e81013f8c6d746a4f970791615c4ecb49b9263b00bc";
+const DEFAULT_ADMIN_PASSWORD_HASH = "ac80a0874fa35de1a4fe91480a0502473a18f97dbbe03ba4293fab7cbc62875e";
 const SHA256_HEX_PATTERN = /^[a-f0-9]{64}$/;
 
 function normalizeHash(value: unknown) {

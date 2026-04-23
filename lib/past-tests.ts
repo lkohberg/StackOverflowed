@@ -216,5 +216,5 @@ export async function deletePastTest(id: number) {
     [id],
   );
 
-  return result.rowCount > 0;
+  return (result.rowCount ?? 0) > 0;
 }

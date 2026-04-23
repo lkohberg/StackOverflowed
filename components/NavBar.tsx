@@ -148,6 +148,10 @@ export function NavBar() {
                 onClick={() => {
                   setAdminHash("");
                   setPassword("");
+                  setAdminError(null);
+                  setAdminUnlocked(false);
+                  setLogoTapCount(0);
+                  sessionStorage.removeItem(ADMIN_UNLOCKED_STORAGE_KEY);
                 }}
                 className="rounded-md border border-ui-border px-3 py-2 text-sm font-medium text-body transition hover:bg-surface-raised"
               >

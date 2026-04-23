@@ -44,16 +44,20 @@ export default function ChatPage() {
   const formRef = useRef<HTMLFormElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const hasAutoScrolledRef = useRef(false);
+  const wasAdminRef = useRef(false);
 
   useEffect(() => {
     if (isAdmin) {
+      wasAdminRef.current = true;
       setAlias(ADMIN_DISPLAY_NAME);
       sessionStorage.setItem("chat-alias", ADMIN_DISPLAY_NAME);
       return;
     }
 
-    const stored = sessionStorage.getItem("chat-alias");
-    if (stored) {
+    const shouldGenerateNewAlias = wasAdminRef.current;
+    wasAdminRef.current = false;
+    const stored = sessionStorage.getItem("chat-alias")?.trim() ?? "";
+    if (stored && !shouldGenerateNewAlias && !isAuthorityMessage(stored)) {
       setAlias(stored);
       return;
     }

@@ -10,6 +10,7 @@ type ChatMessage = {
   created_at: string;
 };
 
+const ADMIN_DISPLAY_NAME = "Admin*";
 const ALIAS_ADJECTIVES = ["Blauer", "Roter", "Grüner", "Gelber", "Schneller", "Ruhiger", "Cleverer", "Flinker", "Wilder", "Starker"];
 const ALIAS_NOUNS = ["Pinguin", "Adler", "Fuchs", "Bär", "Wolf", "Dachs", "Hase", "Otter", "Igel", "Luchs"];
 
@@ -27,6 +28,10 @@ function formatTimestamp(value: string) {
   });
 }
 
+function isAuthorityMessage(senderName: string) {
+  return senderName.trim().toLowerCase() === ADMIN_DISPLAY_NAME.toLowerCase();
+}
+
 export default function ChatPage() {
   const { adminHash, isAdmin } = useAdminAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -41,6 +46,12 @@ export default function ChatPage() {
   const hasAutoScrolledRef = useRef(false);
 
   useEffect(() => {
+    if (isAdmin) {
+      setAlias(ADMIN_DISPLAY_NAME);
+      sessionStorage.setItem("chat-alias", ADMIN_DISPLAY_NAME);
+      return;
+    }
+
     const stored = sessionStorage.getItem("chat-alias");
     if (stored) {
       setAlias(stored);
@@ -49,7 +60,7 @@ export default function ChatPage() {
     const name = generateAlias();
     sessionStorage.setItem("chat-alias", name);
     setAlias(name);
-  }, []);
+  }, [isAdmin]);
 
   const loadMessages = useCallback(async () => {
     try {
@@ -112,8 +123,11 @@ export default function ChatPage() {
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, sender_name: alias }),
+        headers: {
+          "Content-Type": "application/json",
+          ...(isAdmin && adminHash ? { "x-admin-hash": adminHash } : {}),
+        },
+        body: JSON.stringify({ message, sender_name: isAdmin ? ADMIN_DISPLAY_NAME : alias }),
       });
 
       const payload = (await response.json()) as { error?: string };
@@ -183,7 +197,11 @@ export default function ChatPage() {
             zentraler-chat
           </h1>
           <p className="mt-1 text-sm text-muted">
-            Du schreibst als <span className="font-medium text-accent">{alias || "…"}</span>. Nachrichten der letzten 48 Stunden sind für alle sichtbar.
+            Du schreibst als{" "}
+            <span className={isAdmin ? "rounded-md bg-amber-100 px-2 py-0.5 font-extrabold tracking-wide text-amber-700" : "font-medium text-accent"}>
+              {isAdmin ? ADMIN_DISPLAY_NAME : alias || "…"}
+            </span>
+            . Nachrichten der letzten 48 Stunden sind für alle sichtbar.
           </p>
         </header>
 
@@ -198,8 +216,16 @@ export default function ChatPage() {
                 <li key={message.id} className="rounded-xl border border-ui-border bg-surface-raised px-4 py-3">
                   <div className="mb-1 flex items-center justify-between gap-3 text-xs">
                     <div className="flex items-center gap-2">
-                    <span className="font-semibold text-accent">{message.sender_name}</span>
-                    <span className="text-muted">{formatTimestamp(message.created_at)}</span>
+                      <span
+                        className={
+                          isAuthorityMessage(message.sender_name)
+                            ? "rounded-md border border-amber-300 bg-amber-100 px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.12em] text-amber-700"
+                            : "font-semibold text-accent"
+                        }
+                      >
+                        {message.sender_name}
+                      </span>
+                      <span className="text-muted">{formatTimestamp(message.created_at)}</span>
                     </div>
                     {isAdmin ? (
                       <button

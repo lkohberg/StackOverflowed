@@ -8,7 +8,7 @@ type CreateChatMessageRequest = {
 };
 
 const BAD_WORD_PATTERN =
-  /\b(?:bitch(?:es)?|fick(?:en|st|t)?|wichs(?:er|ers|t|te)?|hurensohn|hurenso[hc]n|hurensöhne|hure[n]?|n[i1!]g+(?:e[rg]|a|er|ah?|az?|er[sz])?|n[e3]g+(?:e[rg]|a|er|ah?|az?|er[sz])?|porn(?:o|os|hub)?|xvideo[sz]?|xhamster|onlyfan[sz]|camgirl|camboy|dildo[sz]?|vibrator(?:en)?|fetisch|gangbang|creampie|buk+ake|hentai|tentakelporn)\b/gi;
+  /\b(?:bitch(?:es)?|fick(?:en|st|t)?|wichs(?:er|ers|t|te)?|hurensohn|hurenso[hc]n|hurensöhne|hure[n]?|n[i1!]g+(?:e[rg]|a|er|ah?|az?|er[sz])?|n[e3]g+(?:e[rg]|a|er|ah?|az?|er[sz])?|porn(?:o|os|hub)?|xvideo[sz]?|xhamster|onlyfan[sz]|camgirl|camboy|dildo[sz]?|vibrator(?:en)?|fetisch|gangbang|creampie|buk+ake|hentai|tentakelporn|s[e3]x+y(?:s|ies|ie)?|s[e3]x+i(?:s)?|n(?:u|ü|v)+t+[e3]+(?:n|r)?|n[uü]t+t+[e3]+(?:n|r)?)\b/gi;
 
 function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -61,6 +61,7 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as CreateChatMessageRequest;
     const message = normalizeText(body.message);
+    const adminRequest = isAdminRequest(request);
 
     if (!message) {
       return NextResponse.json({ error: "Nachricht ist erforderlich." }, { status: 400 });
@@ -77,7 +78,13 @@ export async function POST(request: Request) {
     }
 
     const rawSenderName = normalizeText(body.sender_name);
-    const senderName = rawSenderName.slice(0, 30) || "Anonym";
+    let senderName = rawSenderName.slice(0, 30) || "Anonym";
+
+    if (adminRequest) {
+      senderName = "Admin*";
+    } else if (senderName.toLowerCase() === "admin*") {
+      return NextResponse.json({ error: "Dieser Name ist reserviert." }, { status: 400 });
+    }
 
     const createdMessage = await createChatMessage({ message: filteredMessage, sender_name: senderName });
     return NextResponse.json({ message: createdMessage }, { status: 201 });

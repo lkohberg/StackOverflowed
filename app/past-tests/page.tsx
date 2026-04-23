@@ -9,7 +9,6 @@ import {
   getSubjectsForSchoolLevel,
   getTeachersForSubject,
 } from "@/lib/past-tests-catalog";
-import { useAdminAuth } from "@/lib/use-admin-auth";
 
 type PastTest = {
   id: number;
@@ -85,11 +84,9 @@ function toFilterQuery(filters: FilterState) {
 }
 
 export default function PastTestsPage() {
-  const { adminHash, isAdmin } = useAdminAuth();
   const [tests, setTests] = useState<PastTest[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     department: "",
@@ -285,37 +282,6 @@ export default function PastTestsPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!isAdmin || !adminHash) {
-      return;
-    }
-
-    setError(null);
-    setDeletingId(id);
-
-    try {
-      const response = await fetch("/api/past-tests", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-hash": adminHash,
-        },
-        body: JSON.stringify({ id }),
-      });
-      const payload = (await response.json()) as { error?: string };
-
-      if (!response.ok) {
-        throw new Error(payload.error ?? "Test konnte nicht gelöscht werden.");
-      }
-
-      await loadTests();
-    } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "Test konnte nicht gelöscht werden.");
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
   return (
     <div className="w-full px-6 py-8 sm:px-8 lg:px-12">
       <div className="space-y-8">
@@ -429,18 +395,6 @@ export default function PastTestsPage() {
                   >
                     ZIP herunterladen
                   </a>
-                  {isAdmin ? (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        void handleDelete(test.id);
-                      }}
-                      disabled={deletingId === test.id}
-                      className="mt-3 ml-2 inline-flex rounded-md border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {deletingId === test.id ? "Lösche..." : "Löschen"}
-                    </button>
-                  ) : null}
                 </li>
               ))}
             </ul>

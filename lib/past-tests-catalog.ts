@@ -85,7 +85,6 @@ const fourthYearSubjects: SubjectTeachers[] = [
 ];
 
 const fifthYearSubjects: SubjectTeachers[] = [
-  { subject: "Laboratorium", teachers: ["SAMC"] },
   { subject: "NWT", teachers: ["PUSH", "RATP", "ROMO", "REWO"] },
   { subject: "SEW", teachers: ["PRAG", "RATP"] },
   { subject: "D", teachers: ["WEIN", "RABS", "LINA"] },

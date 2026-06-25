@@ -84,12 +84,25 @@ const fourthYearSubjects: SubjectTeachers[] = [
   { subject: "INSY", teachers: ["RATP", "SCHH"] },
 ];
 
+const fifthYearSubjects: SubjectTeachers[] = [
+  { subject: "Laboratorium", teachers: ["SAMC"] },
+  { subject: "NWT", teachers: ["PUSH", "RATP", "ROMO", "REWO"] },
+  { subject: "SEW", teachers: ["PRAG", "RATP"] },
+  { subject: "D", teachers: ["WEIN", "RABS", "LINA"] },
+  { subject: "INSY", teachers: ["RATP", "SCHH"] },
+  { subject: "ITP2", teachers: ["ROMO", "SAMC", "PARZ"] },
+  { subject: "WIR_2", teachers: ["HILS"] },
+  { subject: "LA1", teachers: ["RARZ", "SAMC", "WITT", "SCHH"] },
+  { subject: "AM", teachers: ["NIET", "SCAN"] },
+  { subject: "E1", teachers: ["WILD", "WEIN", "LOVB"] },
+];
+
 export const PAST_TESTS_CATALOG: Record<SchoolLevel, SubjectTeachers[]> = {
   "1": firstYearSubjects,
   "2": secondYearSubjects,
   "3": thirdYearSubjects,
   "4": fourthYearSubjects,
-  "5": thirdYearSubjects,
+  "5": fifthYearSubjects,
 };
 
 export function isValidSchoolLevel(value: string): value is SchoolLevel {
